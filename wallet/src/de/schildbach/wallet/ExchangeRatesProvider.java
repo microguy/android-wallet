@@ -39,6 +39,7 @@ import javax.annotation.Nullable;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.utils.Fiat;
 import org.bitcoinj.utils.MonetaryFormat;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -296,6 +297,19 @@ public class ExchangeRatesProvider extends ContentProvider
 
 		try
 		{
+
+			Double btcRate = 0.0;
+			Object result = getGoldCoinValueBTC_ccex();
+
+			if(result == null)
+			{
+				result = getCoinValueBTC_cryptopia();
+				if(result == null)
+					return null;
+			}
+
+			btcRate = (Double)result;
+
 			connection = (HttpURLConnection) url.openConnection();
 
 			connection.setInstanceFollowRedirects(false);
@@ -331,12 +345,16 @@ public class ExchangeRatesProvider extends ContentProvider
 
 						for (final String field : fields)
 						{
-							final String rateStr = o.optString(field, null);
+							/*final*/ String rateStr = o.optString(field, null);
 
 							if (rateStr != null)
 							{
 								try
 								{
+									double rateForBTC = Double.parseDouble(rateStr);
+
+									rateStr = String.format("%.8f", rateForBTC * btcRate).replace(",", ".");
+
 									final Fiat rate = Fiat.parseFiat(currencyCode, rateStr);
 
 									if (rate.signum() > 0)
@@ -384,6 +402,174 @@ public class ExchangeRatesProvider extends ContentProvider
 
 			if (connection != null)
 				connection.disconnect();
+		}
+
+		return null;
+	}
+
+	private static Object getGoldCoinValueBTC_ccex()
+	{
+		//final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
+		// Keep the LTC rate around for a bit
+		Double btcRate = 0.0;
+		String currencyCryptsy = "BTC";
+		String exchange = "https://c-cex.com/t/gld-btc.json";
+
+		HttpURLConnection connection = null;
+
+		try {
+			// final String currencyCode = currencies[i];
+			final URL url = new URL(exchange);
+
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setInstanceFollowRedirects(false);
+			connection.setConnectTimeout(Constants.HTTP_TIMEOUT_MS);
+			connection.setReadTimeout(Constants.HTTP_TIMEOUT_MS);
+			//connection.addRequestProperty("User-Agent", userAgent);
+			connection.connect();
+
+
+			final StringBuilder contentCryptsy = new StringBuilder();
+
+			Reader reader = null;
+			try
+			{
+				reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024));
+				Io.copy(reader, contentCryptsy);
+				final JSONObject head = new JSONObject(contentCryptsy.toString());
+
+				//JSONObject returnObject = head.getJSONObject("return");
+				//JSONObject markets = returnObject.getJSONObject("markets");
+				JSONObject GLD = head.getJSONObject("ticker");
+
+
+
+				//JSONArray recenttrades = GLD.getJSONArray("recenttrades");
+
+				double btcTraded = 0.0;
+				double gldTraded = 0.0;
+
+                /*for(int i = 0; i < recenttrades.length(); ++i)
+                {
+                    JSONObject trade = (JSONObject)recenttrades.get(i);
+                    btcTraded += trade.getDouble("total");
+                    gldTraded += trade.getDouble("quantity");
+                }
+                Double averageTrade = btcTraded / gldTraded;
+                */
+
+				Double averageTrade = head.getDouble("buy");
+
+
+
+				//Double lastTrade = GLD.getDouble("lasttradeprice");
+
+
+
+				//String euros = String.format("%.7f", averageTrade);
+				// Fix things like 3,1250
+				//euros = euros.replace(",", ".");
+				//rates.put(currencyCryptsy, new ExchangeRate(currencyCryptsy, Utils.toNanoCoins(euros), URLCryptsy.getHost()));
+				if(currencyCryptsy.equalsIgnoreCase("BTC")) btcRate = averageTrade;
+
+			}
+			finally
+			{
+				if (reader != null)
+					reader.close();
+			}
+			return btcRate;
+		}
+		catch (final IOException x)
+		{
+			x.printStackTrace();
+		}
+		catch (final JSONException x)
+		{
+			x.printStackTrace();
+		}
+
+		return null;
+	}
+	private static Object getCoinValueBTC_cryptopia()
+	{
+		//final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
+		// Keep the LTC rate around for a bit
+		Double btcRate = 0.0;
+		String currency = "BTC";
+		String exchange = "https://www.cryptopia.co.nz/api/GetMarket/2623";
+
+
+		HttpURLConnection connection = null;
+
+
+		try {
+			// final String currencyCode = currencies[i];
+			final URL url = new URL(exchange);
+
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setInstanceFollowRedirects(false);
+			connection.setConnectTimeout(Constants.HTTP_TIMEOUT_MS);
+			connection.setReadTimeout(Constants.HTTP_TIMEOUT_MS);
+			//connection.addRequestProperty("User-Agent", userAgent);
+			connection.connect();
+
+			final StringBuilder content = new StringBuilder();
+
+			Reader reader = null;
+			try
+			{
+				reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024));
+				Io.copy(reader, content);
+				final JSONObject head = new JSONObject(content.toString());
+
+				/*{
+					"Success":true,
+						"Message":null,
+						"Data":{
+							"TradePairId":100,
+							"Label":"LTC/BTC",
+							"AskPrice":0.00006000,
+							"BidPrice":0.02000000,
+							"Low":0.00006000,
+							"High":0.00006000,
+							"Volume":1000.05639978,
+							"LastPrice":0.00006000,
+							"LastVolume":499.99640000,
+							"BuyVolume":67003436.37658233,
+							"SellVolume":67003436.37658233,
+							"Change":-400.00000000
+						}
+				}*/
+				String result = head.getString("Success");
+				if(result.equals("true"))
+				{
+					JSONObject dataObject = head.getJSONObject("Data");
+
+					Double averageTrade = Double.valueOf(0.0);
+					if(dataObject.get("Label").equals("GLD/BTC"))
+						averageTrade = dataObject.getDouble("LastPrice");
+
+
+					if(currency.equalsIgnoreCase("BTC"))
+						btcRate = averageTrade;
+				}
+				return btcRate;
+			}
+			finally
+			{
+				if (reader != null)
+					reader.close();
+			}
+
+		}
+		catch (final IOException x)
+		{
+			x.printStackTrace();
+		}
+		catch (final JSONException x)
+		{
+			x.printStackTrace();
 		}
 
 		return null;
