@@ -9,3 +9,4 @@ local.properties
 bin/
 gen/
 gradle/
+*.apk

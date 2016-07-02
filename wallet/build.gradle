@@ -49,6 +49,12 @@ android {
             debuggable true
         }
     }
+    defaultConfig {
+        versionCode 4580
+        versionName "4.58.0"
+
+
+    }
 
     productFlavors {
         _testNet {
