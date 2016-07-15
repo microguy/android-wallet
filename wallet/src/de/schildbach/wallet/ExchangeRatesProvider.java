@@ -39,6 +39,7 @@ import javax.annotation.Nullable;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.utils.Fiat;
 import org.bitcoinj.utils.MonetaryFormat;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -111,6 +112,9 @@ public class ExchangeRatesProvider extends ContentProvider
 	private static final URL BLOCKCHAININFO_URL;
 	private static final String[] BLOCKCHAININFO_FIELDS = new String[] { "15m" };
 	private static final String BLOCKCHAININFO_SOURCE = "blockchain.info";
+	private static final URL BITPAY_URL;
+	private static final String[] BITPAY_FIELDS = new String[] { "rate" };
+	private static final String BITPAY_SOURCE = "coindesk.com";
 
 	// https://bitmarket.eu/api/ticker
 
@@ -120,6 +124,7 @@ public class ExchangeRatesProvider extends ContentProvider
 		{
 			BITCOINAVERAGE_URL = new URL("https://api.bitcoinaverage.com/custom/abw");
 			BLOCKCHAININFO_URL = new URL("https://blockchain.info/ticker");
+			BITPAY_URL = new URL("https://bitpay.com/api/rates");
 		}
 		catch (final MalformedURLException x)
 		{
@@ -168,6 +173,8 @@ public class ExchangeRatesProvider extends ContentProvider
 		if (!offline && (lastUpdated == 0 || now - lastUpdated > UPDATE_FREQ_MS))
 		{
 			Map<String, ExchangeRate> newExchangeRates = null;
+			if (newExchangeRates == null)
+				newExchangeRates = requestExchangeRates2(BITPAY_URL, userAgent, BITPAY_SOURCE, BITPAY_FIELDS);
 			if (newExchangeRates == null)
 				newExchangeRates = requestExchangeRates(BITCOINAVERAGE_URL, userAgent, BITCOINAVERAGE_SOURCE, BITCOINAVERAGE_FIELDS);
 			if (newExchangeRates == null)
@@ -407,6 +414,129 @@ public class ExchangeRatesProvider extends ContentProvider
 		return null;
 	}
 
+	private static Map<String, ExchangeRate> requestExchangeRates2(final URL url, final String userAgent, final String source, final String... fields)
+	{
+		final long start = System.currentTimeMillis();
+
+		HttpURLConnection connection = null;
+		Reader reader = null;
+
+		try
+		{
+
+			Double btcRate = 0.0;
+			Object result = getGoldCoinValueBTC_ccex();
+
+			if(result == null)
+			{
+				result = getCoinValueBTC_cryptopia();
+				if(result == null)
+					return null;
+			}
+
+			btcRate = (Double)result;
+
+			connection = (HttpURLConnection) url.openConnection();
+
+			connection.setInstanceFollowRedirects(false);
+			connection.setConnectTimeout(Constants.HTTP_TIMEOUT_MS);
+			connection.setReadTimeout(Constants.HTTP_TIMEOUT_MS);
+			connection.addRequestProperty("User-Agent", userAgent);
+			connection.addRequestProperty("Accept-Encoding", "gzip");
+			connection.connect();
+
+			final int responseCode = connection.getResponseCode();
+			if (responseCode == HttpURLConnection.HTTP_OK)
+			{
+				final String contentEncoding = connection.getContentEncoding();
+
+				InputStream is = new BufferedInputStream(connection.getInputStream(), 1024);
+				if ("gzip".equalsIgnoreCase(contentEncoding))
+					is = new GZIPInputStream(is);
+
+				reader = new InputStreamReader(is, Charsets.UTF_8);
+				final StringBuilder content = new StringBuilder();
+				final long length = Io.copy(reader, content);
+
+				final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
+
+				//final JSONObject head = new JSONObject(content.toString());
+				final JSONArray head = new JSONArray(content.toString());
+
+				for(int j = 0; j < head.length(); ++j)
+				//for (final Iterator<String> i = head.keys(); i.hasNext();)
+				{
+					final JSONObject info = (JSONObject)head.get(j);
+					final String currencyCode = Strings.emptyToNull(info.getString("code"));
+					if (currencyCode != null && !"timestamp".equals(currencyCode) && !MonetaryFormat.CODE_BTC.equals(currencyCode)
+							&& !MonetaryFormat.CODE_MBTC.equals(currencyCode) && !MonetaryFormat.CODE_UBTC.equals(currencyCode))
+					{
+						final JSONObject o = info; //head.getJSONObject(currencyCode);
+
+						for (final String field : fields)
+						{
+							/*final*/ String rateStr = o.optString(field, null);
+
+							if (rateStr != null)
+							{
+								try
+								{
+									double rateForBTC = Double.parseDouble(rateStr);
+
+									rateStr = String.format("%.8f", rateForBTC * btcRate).replace(",", ".");
+
+									final Fiat rate = Fiat.parseFiat(currencyCode, rateStr);
+
+									if (rate.signum() > 0)
+									{
+										rates.put(currencyCode, new ExchangeRate(new org.bitcoinj.utils.ExchangeRate(rate), source));
+										break;
+									}
+								}
+								catch (final NumberFormatException x)
+								{
+									log.warn("problem fetching {} exchange rate from {} ({}): {}", currencyCode, url, contentEncoding, x.getMessage());
+								}
+							}
+						}
+					}
+				}
+
+				log.info("fetched exchange rates from {} ({}), {} chars, took {} ms", url, contentEncoding, length, System.currentTimeMillis()
+						- start);
+
+				return rates;
+			}
+			else
+			{
+				log.warn("http status {} when fetching exchange rates from {}", responseCode, url);
+			}
+		}
+		catch (final Exception x)
+		{
+			log.warn("problem fetching exchange rates from " + url, x);
+		}
+		finally
+		{
+			if (reader != null)
+			{
+				try
+				{
+					reader.close();
+				}
+				catch (final IOException x)
+				{
+					// swallow
+				}
+			}
+
+			if (connection != null)
+				connection.disconnect();
+		}
+
+		return null;
+	}
+
 	private static Object getGoldCoinValueBTC_ccex()
 	{
 		//final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
@@ -458,7 +588,7 @@ public class ExchangeRatesProvider extends ContentProvider
                 Double averageTrade = btcTraded / gldTraded;
                 */
 
-				Double averageTrade = head.getDouble("buy");
+				Double averageTrade = GLD.getDouble("buy");
 
 
 
