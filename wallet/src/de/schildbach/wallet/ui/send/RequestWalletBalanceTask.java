@@ -36,6 +36,7 @@ import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionConfidence.ConfidenceType;
 import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,10 +90,13 @@ public final class RequestWalletBalanceTask
 				org.bitcoinj.core.Context.propagate(Constants.CONTEXT);
 
 				final StringBuilder url = new StringBuilder(Constants.BITEASY_API_URL);
-				url.append("outputs");
+				url.append("&key=d47da926b82e");    //Cryptoid API key
+				url.append("&active=").append(addresses[0].toString());
+
+				/*url.append("outputs");
 				url.append("?per_page=MAX");
 				url.append("&operator=AND");
-				url.append("&spent_state=UNSPENT");
+				url.append("&spent_state=UNSPENT");*/
 				for (final Address address : addresses)
 					url.append("&address[]=").append(address.toBase58());
 
@@ -126,7 +130,8 @@ public final class RequestWalletBalanceTask
 
 						final JSONObject json = new JSONObject(content.toString());
 
-						final int status = json.getInt("status");
+						final JSONObject jsonData = json;
+						/*final int status = json.getInt("status");
 						if (status != 200)
 							throw new IOException("api status " + status + " when fetching unspent outputs");
 
@@ -136,8 +141,8 @@ public final class RequestWalletBalanceTask
 
 						if (!"false".equals(jsonPagination.getString("next_page")))
 							throw new IOException("result set too big");
-
-						final JSONArray jsonOutputs = jsonData.getJSONArray("outputs");
+*/
+						final JSONArray jsonOutputs = jsonData.getJSONArray("unspent_outputs");
 
 						final Map<Sha256Hash, Transaction> transactions = new HashMap<Sha256Hash, Transaction>(jsonOutputs.length());
 
@@ -145,9 +150,9 @@ public final class RequestWalletBalanceTask
 						{
 							final JSONObject jsonOutput = jsonOutputs.getJSONObject(i);
 
-							final Sha256Hash uxtoHash = Sha256Hash.wrap(jsonOutput.getString("transaction_hash"));
-							final int uxtoIndex = jsonOutput.getInt("transaction_index");
-							final byte[] uxtoScriptBytes = Constants.HEX.decode(jsonOutput.getString("script_pub_key"));
+							final Sha256Hash uxtoHash = Sha256Hash.wrap(jsonOutput.getString("tx_hash"));
+							final int uxtoIndex = jsonOutput.getInt("tx_ouput_n");
+							final byte[] uxtoScriptBytes = ScriptBuilder.createOutputScript(addresses[0]).getProgram();
 							final Coin uxtoValue = Coin.valueOf(Long.parseLong(jsonOutput.getString("value")));
 
 							Transaction tx = transactions.get(uxtoHash);

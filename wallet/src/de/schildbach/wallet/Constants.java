@@ -82,7 +82,7 @@ public final class Constants
 	/** Maximum size of backups. Files larger will be rejected. */
 	public static final long BACKUP_MAX_CHARS = 10000000;
 
-	private static final String BITEASY_API_URL_PROD = "https://api.biteasy.com/v2/btc/mainnet/";
+	private static final String BITEASY_API_URL_PROD = "https://chainz.cryptoid.info/gld/api.dws?q=unspent";
 	private static final String BITEASY_API_URL_TEST = "https://api.biteasy.com/v2/btc/testnet/";
 	/** Base URL for blockchain API. */
 	public static final String BITEASY_API_URL = NETWORK_PARAMETERS.getId().equals(NetworkParameters.ID_MAINNET) ? BITEASY_API_URL_PROD
