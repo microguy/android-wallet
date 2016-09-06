@@ -1,21 +1,21 @@
-Nosite svoje novce vedno s seboj v žepu. Plačila so hitra, le prečitate QR-kodo. Tudi prejemanje plačil je zanesljivo in takojšnje. Bitcoin Wallet je prva mobilna aplikacija za bitcoin in najbrž tudi najbolj varna!
+Nosite svoje novce vedno s seboj v žepu. Plačila so hitra, le prečitate QR-kodo. Tudi prejemanje plačil je zanesljivo in takojšnje. GoldCoin Wallet je prva mobilna aplikacija za GoldCoin in najbrž tudi najbolj varna!
 
 LASTNOSTI:
 
 • Potrebna ni nobena registracija, spletna storitev ali oblak! Ta denarnica deluje povsem decentralizirano in vrstniško.
-• Prikaz zneskov v BTC, mBTC ali µBTC.
+• Prikaz zneskov v GLD, mGLD ali µGLD.
 • Samodejna pretvorba v evre in druge lokalne valute.
-• Pošiljanje in prejemanje bitcoinov prek NFC, QR-kod ali bitcoin URL-jev.
-• Zasebni imenik bitcoin naslovov.
-• Z bitcoinom lahko plačujete tudi, če nimate povezave.
+• Pošiljanje in prejemanje GoldCoinov prek NFC, QR-kod ali GoldCoin URL-jev.
+• Zasebni imenik GoldCoin naslovov.
+• Z GoldCoinom lahko plačujete tudi, če nimate povezave.
 • Sistemska obvestila ob prejetih novcih.
 • Widget, ki prikazuje stanje v denarnici.
 
-Več o bitcoinu lahko zveste na
-https://bitcoin.org/sl/
+Več o GoldCoinu lahko zveste na
+http://gldcoin.com/sl/
 
-Če želite prispevati k aplikaciji Bitcoin Wallet, se nam pridružite na
-https://github.com/bitcoin-wallet/bitcoin-wallet
+Če želite prispevati k aplikaciji GoldCoin Wallet, se nam pridružite na
+https://github.com/Stouse49/goldcoin-wallet
 
 Licenca: GPLv3
 Uporaba na lastno odgovornost!

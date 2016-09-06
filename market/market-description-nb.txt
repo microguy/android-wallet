@@ -1,35 +1,35 @@
-<b>Ha alltid dine bitcoins med deg, i lommen din!</b> Du betaler ved å raskt skanne en QR-kode. Som en kjøpmann, får du betaling pålitelig og kjapt. Bitcoin Wallet er den første Bitcoin mobilappen, og kanskje også den sikreste!
+<b>Ha alltid dine GoldCoins med deg, i lommen din!</b> Du betaler ved å raskt skanne en QR-kode. Som en kjøpmann, får du betaling pålitelig og kjapt. GoldCoin Wallet er den første GoldCoin mobilappen, og kanskje også den sikreste!
 
 
 <b>FUNKSJONER</b>
 
 • Ingen registrering, webtjeneste eller sky trengs! Denne lommeboken er desentralisert og peer-to-peer.
-• Visning av bitcoinbeløpet i BTC, mBTC og μBTC.
+• Visning av GoldCoinbeløpet i GLD, mGLD og μGLD.
 • Konvertering til og fra nasjonale valutaer.
-• Sende og motta bitcoin via NFC, QR-koder eller Bitcoin-URLer.
-• Adressebok for regelmessig brukte Bitcoin-adresser.
+• Sende og motta GoldCoin via NFC, QR-koder eller GoldCoin-URLer.
+• Adressebok for regelmessig brukte GoldCoin-adresser.
 • Når du er frakoblet, kan du fortsatt betale via blåtann.
 • Systemvarsling for mottatte mynter.
 • Sveiping av papirlommebøker (f.eks. de som brukes til kaldlagring).
-• Miniprogram for saldo over bitcoins.
+• Miniprogram for saldo over GoldCoins.
 
 
 <b>BIDRA</b>
 
-Bitcoin Wallet har <b>åpen kildekode</b> og er <b>fri programvare</b>. Lisens: GPLv3
+GoldCoin Wallet har <b>åpen kildekode</b> og er <b>fri programvare</b>. Lisens: GPLv3
 https://www.gnu.org/licenses/gpl-3.0.en.html
 
 Vår kildekode er tilgjengelig på GitHub:
-https://github.com/bitcoin-wallet/bitcoin-wallet
+https://github.com/Stouse49/goldcoin-wallet
 
 Alle oversettelser skjer via Transifex:
-https://www.transifex.com/bitcoin-wallet/bitcoin-wallet/
+https://www.transifex.com/GoldCoin-wallet/GoldCoin-wallet/
 
 
 <b>ANBEFALINGER</b>
 
-• Mange mobillommebøker baserer sin kildekode på Bitcoin Wallet. Eksempler: blockchain.info og BTCX.
-• Anbefalt mobillommebok av https://bitcoin.org
+• Mange mobillommebøker baserer sin kildekode på GoldCoin Wallet. Eksempler: blockchain.info og GLDX.
+• Anbefalt mobillommebok av http://gldcoin.com
 • Anbefalt av BitPay.
 
 
