@@ -50,18 +50,18 @@ android {
         }
     }
     defaultConfig {
-        versionCode 4580
-        versionName "4.58.0"
+        versionCode 14582
+        versionName "4.58.2"
 
 
     }
 
     productFlavors {
         _testNet {
-            applicationId = "com.goldcoin.wallet_test"
+            applicationId = "de.schildbach.wallet.goldcoin_test"
         }
         prod {
-            applicationId = "com.goldcoin.wallet"
+            applicationId = "de.schildbach.wallet.goldcoin"
         }
     }
 
