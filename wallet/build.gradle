@@ -50,8 +50,8 @@ android {
         }
     }
     defaultConfig {
-        versionCode 14582
-        versionName "4.58.2"
+        versionCode 14583
+        versionName "4.58.3"
 
 
     }
