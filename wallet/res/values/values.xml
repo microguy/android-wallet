@@ -21,10 +21,10 @@
 		<item>@string/preferences_precision_labels_0_6</item>
 	</string-array>
 	<string-array name="preferences_block_explorer_values">
-		<item>http://gld.cryptocoinexplorer.com/</item>
+		<item>https://chainz.cryptoid.info/gld/</item>
 	</string-array>
 	<string-array name="preferences_block_explorer_labels">
-		<item>gld.cryptocoinexplorer.com</item>
+		<item>Chainz (cryptoID)</item>
 	</string-array>
 
 </resources>
