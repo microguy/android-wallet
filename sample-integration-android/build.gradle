@@ -7,7 +7,7 @@ dependencies {
     compile(project(':integration-android')) {
         exclude(group: 'com.google.android', module: 'android')
     }
-    compile 'org.goldcoinj:goldcoinj-core:0.14.2'
+    compile 'org.goldcoinj:goldcoinj-core:0.14.3'
 }
 
 android {
