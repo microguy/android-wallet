@@ -115,7 +115,7 @@ public class ExchangeRatesProvider extends ContentProvider {
 
 	static {
 		try {
-			BITCOINAVERAGE_URL = new URL("https://api.bitcoinaverage.com/custom/abw");
+			BITCOINAVERAGE_URL = new URL("https://apiv2.bitcoinaverage.com/indices/global/ticker/short?crypto=BTC");
 			BLOCKCHAININFO_URL = new URL("https://blockchain.info/ticker");
 			BITPAY_URL = new URL("https://bitpay.com/api/rates");
 		} catch (final MalformedURLException x) {
@@ -273,9 +273,6 @@ public class ExchangeRatesProvider extends ContentProvider {
 			Double btcRate = 0.0;
 
 			Object result = getCoinValueBTC_bittrex();
-			if (result == null) {
-				result = getGoldCoinValueBTC_ccex();
-			}
 
 			if (result == null) {
 				result = getCoinValueBTC_cryptopia();
@@ -373,7 +370,7 @@ public class ExchangeRatesProvider extends ContentProvider {
 		try {
 
 			Double btcRate = 0.0;
-			Object result = getGoldCoinValueBTC_ccex();
+			Object result = getCoinValueBTC_bittrex();
 
 			if (result == null) {
 				result = getCoinValueBTC_cryptopia();
@@ -544,7 +541,7 @@ public class ExchangeRatesProvider extends ContentProvider {
 	private static Object getCoinValueBTC_cryptopia() {
 		//final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
 		// Keep the LTC rate around for a bit
-		Double btcRate = 0.0;
+		Double btcRate = Double.valueOf(0.0);
 		String currency = "BTC";
 		String exchange = "https://www.cryptopia.co.nz/api/GetMarket/2623";
 
@@ -595,12 +592,14 @@ public class ExchangeRatesProvider extends ContentProvider {
 
 					Double averageTrade = Double.valueOf(0.0);
 					if (dataObject.get("Label").equals("GLD/BTC"))
-						averageTrade = dataObject.getDouble("LastPrice");
+						averageTrade = (Double)dataObject.getDouble("LastPrice");
 
 
 					if (currency.equalsIgnoreCase("BTC"))
 						btcRate = averageTrade;
 				}
+				log.info("fetched exchange rates from {}", url);
+
 				return btcRate;
 			} finally {
 				if (reader != null)
@@ -619,7 +618,7 @@ public class ExchangeRatesProvider extends ContentProvider {
 	private static Object getCoinValueBTC_bittrex() {
 		//final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
 		// Keep the LTC rate around for a bit
-		Double btcRate = 0.0;
+		Double btcRate = Double.valueOf(0.0);
 		String currency = "BTC";
 		String url = "https://bittrex.com/api/v1.1/public/getticker?market=btc-gld";
 
@@ -647,12 +646,13 @@ public class ExchangeRatesProvider extends ContentProvider {
 				if (result.equals("true")) {
 					JSONObject dataObject = head.getJSONObject("result");
 
-					Double averageTrade = dataObject.getDouble("Last");
+					double averageTrade = dataObject.getDouble("Last");
 
 
 					if (currency.equalsIgnoreCase("BTC"))
-						btcRate = averageTrade;
+						btcRate = Double.valueOf(averageTrade);
 				}
+				log.info("fetched exchange rates from {}", url);
 				return btcRate;
 			} finally {
 				if (reader != null)
