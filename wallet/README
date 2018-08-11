@@ -168,7 +168,7 @@ Instructions for preparing an NFC tag with your address:
   could overwrite the tag with his own GoldCoin address.
 
 
-BITCOINJ
+GOLDCOINJ
 
 GoldCoin Wallet uses goldcoinj for GoldCoin specific logic:
 

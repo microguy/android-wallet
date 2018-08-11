@@ -10,8 +10,8 @@
 		</p>
 
 		<p>
-			De QR code aan de rechterkant bevat een GoldCoin adres en kan door anderen gebruikt worden om te scannen.
-			Raak de QR code aan om deze groter weer te geven.
+			De QR code aan de rechterkant bevat een GoldCoinadres en kan door anderen gebruikt worden om te scannen.
+			Raak de QR-code aan om deze groter weer te geven.
 		</p>
 
 		<p>
@@ -22,14 +22,14 @@
 
 		<p>
 			U kunt GoldCoin verzenden of verzoeken door op de knoppen van de actiebalk te drukken.
-			Meer opties zijn aanwezig in het opties menu.
+			Meer opties zijn aanwezig in het optiesmenu.
 		</p>
 	]]>
 	</string>
   <string name="help_request_coins">
 <![CDATA[
 		<p>
-			Deze dialoog kunt u gebruiken om GoldCoins te verzoeken van iemand (die ook GoldCoin Wallet of een andere GoldCoin client geinstalleerd heeft).
+			Deze dialoog kunt u gebruiken om GoldCoins te verzoeken van iemand (die ook GoldCoin Wallet of een andere GoldCoin-client geïnstalleerd heeft).
 		</p>
 		<p>
 			Eerst vul je een hoeveelheid GoldCoin in die je wilt ontvangen.
@@ -37,7 +37,7 @@
 		<p>
 			Daarna kan de andere persoon de QR-code scannen.
 			Of u kunt uw verzoek met de \'delen\'-knop versturen.
-			De andere persoon dient op de GoldCoin URL te klikken.
+			Als beide apparaten NFC aan hebben staan, kun je ze ook tegen elkaar aanhouden.
 		</p>
 		<p>
 			De andere persoon zal nu de dialoog te zien krijgen voor het verzenden van GoldCoins waarin alle velden ingevuld zijn.
@@ -49,12 +49,12 @@
 <![CDATA[
 		<p>
 			U heeft het dialoog gestart om GoldCoins te verzenden.
-			U bent hier terecht gekomen via het hoofd scherm of door het klikken op een GoldCoin URL in uw browser.
+			U bent hier terecht gekomen via het hoofd scherm of door het klikken op een GoldCoin-URL in uw browser.
 		</p>
 		<p>
 			Als eerste geeft u het GoldCoin adres in waar naar u wilt betalen.
 			Het adres zal automatisch aangevuld worden als deze bekend is in het adresboek.
-			U kan ook QR-codes scannen met een GoldCoin adres of verzoek door op de QR knop in de actie-balk te klikken.
+			U kan ook QR-codes scannen met een GoldCoin adres of verzoek door op de cameraknop te klikken.
 		</p>
 		<p>
 			Vervolgens kunt u zien hoe veel GoldCoins op dit moment beschikbaar zijn voor besteding.
@@ -66,12 +66,12 @@
 		<p>
 			U kunt ook transacties ingeven terwijl u offline bent.
 			Deze transacties zullen verzonden worden zodra GoldCoin Wallet de volgende keer gestart wordt en online is.
-			Als u wenst dat uw transacties zo snel mogelijk verwerkt worden is het verstandig om verbonden te zijn met een zo goed mogelijke internet verbinding (d.w.z. op WLAN).
+			Als u wenst dat uw transacties zo snel mogelijk verwerkt worden is het verstandig om verbonden te zijn met een zo goed mogelijke internet verbinding (d.w.z. op een WLAN).
 		</p>
 		<p>
 			Opmerking:
-			Transcaties kunnen niet ongedaan gemaakt worden!
-			Controleer altijd het ontvangst adres.
+			Transacties kunnen niet ongedaan gemaakt worden!
+			Controleer altijd het ontvangstadres.
 		</p>
 	]]>
 	</string>
@@ -86,7 +86,7 @@
 			Vergelijkbaar met het verlies van uw portemonnee.
 		</p>
 		<p>
-			<b>Voor het verwijderen van GoldCoin Wallet</b> (of verschonen van app data of wipe van het apparaat), <b>dient u de GoldCoins over te zetten naar een andere wallet.</b>.
+			<b>Voor het verwijderen van GoldCoin Wallet</b> (of verschonen van appdata of wipe van het apparaat), <b>dient u de GoldCoins over te zetten naar een andere wallet.</b>.
 			Overblijvende GoldCoins zullen verloren gaan.
 		</p>
 		<p>
@@ -104,4 +104,21 @@
 		</p>
 	]]>
 	</string>
+  <string name="help_technical_notes">
+<![CDATA[
+        <p>
+            <b>Technische opmerkingen:</b>
+        </p>
+        <p>
+            Als een SPV/light portemonnee, GoldCoin Wallet volgt de keten van de meeste \"proof-of-work\" (soms ook genaamd \"longest chain\", de \"winning chain\" of de \"GoldCoin blockchain\").
+            Je kan alleen inkomende betalingen ontvangen als je de mogelijkheid hebt om op die keten te kunnen betalen.
+            Er zijn geen garanties voor GoldCoins of minderheidsketens (\"minority chains\"), dat zijn keten met minder \"proof-of-work\".
+        </p>
+        <p>
+            In het verleden zijn deze minderheidsketens zeer snel irrelevant geworden.
+            Als je de wens hebt om toch een minderheidsketen te volgen, wordt geadviseerd om de \"trusted peer\" feature te gebruiken om exclusief te verbinden met een implementatie van GoldCoind die forceert om die gewenste keten te volgen.
+            Als het netwerk tussen je portemonnee en je trusted peer niet te vertrouwen is, gebruik een VPN voor de authenticatie van die verbinding.
+        </p>
+    ]]>
+    </string>
 </resources>

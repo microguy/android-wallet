@@ -20,7 +20,6 @@
 	<string name="exchange_rates_fragment_rate">nilai</string>
 	<string name="exchange_rates_fragment_balance">saldo</string>
 	<string name="exchange_rates_fragment_source">Harga diambil dari %s</string>
-	<string name="exchange_rates_context_set_as_default_title">Tetapkan sebagai mata uang asing standar</string>
 	<string name="wallet_transactions_options_filter_received">Diterima</string>
 	<string name="wallet_transactions_options_filter_all">Keduanya</string>
 	<string name="wallet_transactions_options_filter_sent">Dikirim</string>
@@ -105,12 +104,8 @@
 	<string name="export_keys_dialog_title">Cadangkan kunci pribadi</string>
 	<string name="backup_wallet_dialog_message">Kunci pribadi Anda akan dienkripsi dgn kata sandi terpilih dan akan disimpan ke penyimpanan eksternal.</string>
 	<string name="export_keys_dialog_button_export">Cadangkan</string>
-	<string name="export_keys_dialog_success">Kunci pribadi Anda telah dicadangkan ke\n\n%s\n\nAmankan, dan jagalah kata sandi Anda!\n\nApakah Anda ingin arsipkan dgn apl?</string>
+	<string name="export_keys_dialog_success">Kunci pribadi Anda telah dicadangkan ke\n\n%s\n\nAmankan, dan jagalah kata sandi Anda!</string>
 	<string name="export_keys_dialog_failure">Kunci pribadi Anda tidak dpt dicadangkan:\n%s</string>
-	<string name="export_keys_dialog_button_archive">Arsip</string>
-	<string name="export_keys_dialog_mail_subject">Pencadangan kunci pribadi GoldCoin Wallet</string>
-	<string name="export_keys_dialog_mail_text">Berkas terenkripsi terlampir mengandung kunci pribadi GoldCoin dan harus dijaga senantiasa. Jangan lupakan kata sandi enkripsi!</string>
-	<string name="export_keys_dialog_mail_intent_chooser">Arsipkan kunci dgn…</string>
 	<string name="import_export_keys_dialog_password">kata sandi</string>
 	<string name="import_export_keys_dialog_show">Tampilkan sandi</string>
 	<string name="import_export_keys_dialog_failure_title">Kesalahan</string>
@@ -131,7 +126,6 @@
 	<string name="preferences_data_usage_title">Penggunaan data</string>
 	<string name="preferences_data_usage_summary">Tampilkan pilihan utk pembatasan penggunaan data ponsel.</string>
 	<string name="preferences_report_issue_title">Laporkan Masalah</string>
-	<string name="preferences_report_issue_summary">Kumpulkan informasi masalah Anda dan kirimkan laporan Anda ke pengembang.</string>
 	<string name="preferences_initiate_reset_title">Atur-ulang Rantai-blok</string>
 	<string name="preferences_initiate_reset_summary">Atur-ulang rantai-blok, transaksi dan saldo dompet. pengulangan akan berlangsung lama.</string>
 	<string name="preferences_initiate_reset_dialog_message">Apakah Anda ingin mengatur-ulang untuk pengulangan rantai-blok?\n\nIni akan menyembunyikan saldo Anda dan hapus transaksi sementara. Keduanya akan pulih setelah rantai-blok sinkron.</string>
@@ -148,9 +142,9 @@
 	<string name="report_issue_dialog_mail_intent_chooser">Kirim laporan dgn…</string>
 	<string name="about_title">Mengenai</string>
 	<string name="about_license_title">Lisensi</string>
-	<string name="about_credits_bitcoinj_title">Apl ini menggunakan goldcoinj %s</string>
-	<string name="about_credits_zxing_title">Apl ini menggunakan \'zxing\'</string>
-	<string name="about_credits_icon_title">Apl ini menggunakan ikon oleh \'bitboy\'</string>
+	<string name="about_category_credits">Apl ini menggunakan…</string>
+	<string name="about_credits_bitcoinj_title">goldcoinj %s</string>
+	<string name="about_credits_zxing_title">ZXing</string>
 	<string name="about_market_app_title">Halaman Apl Google Play</string>
 	<string name="notification_coins_received_msg">Diterima %s</string>
 	<string name="notification_peers_connected_msg">%d peer terhubung</string>
