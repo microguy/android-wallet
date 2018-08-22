@@ -83,10 +83,10 @@ public final class Constants {
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
         /** Filename of the manual key backup (old format, can only be read). */
-        public static final String EXTERNAL_WALLET_KEY_BACKUP = "bitcoin-wallet-keys" + FILENAME_NETWORK_SUFFIX;
+        public static final String EXTERNAL_WALLET_KEY_BACKUP = "goldcoin-wallet-keys" + FILENAME_NETWORK_SUFFIX;
 
         /** Filename of the manual wallet backup. */
-        public static final String EXTERNAL_WALLET_BACKUP = "bitcoin-wallet-backup" + FILENAME_NETWORK_SUFFIX;
+        public static final String EXTERNAL_WALLET_BACKUP = "goldcoin-wallet-backup" + FILENAME_NETWORK_SUFFIX;
 
         /** Filename of the block store for storing the chain. */
         public static final String BLOCKCHAIN_FILENAME = "blockchain" + FILENAME_NETWORK_SUFFIX;
@@ -136,10 +136,10 @@ public final class Constants {
     public static final String REPORT_EMAIL = "stouse49@gmail.com";
 
     /** Subject line for manually reported issues. */
-    public static final String REPORT_SUBJECT_ISSUE = "Reported issue";
+    public static final String REPORT_SUBJECT_ISSUE = "GoldCoin Wallet: Reported issue";
 
     /** Subject line for crash reports. */
-    public static final String REPORT_SUBJECT_CRASH = "Crash report";
+    public static final String REPORT_SUBJECT_CRASH = "GoldCoin Wallet: Crash report";
 
     public static final char CHAR_HAIR_SPACE = '\u200a';
     public static final char CHAR_THIN_SPACE = '\u2009';
@@ -170,9 +170,9 @@ public final class Constants {
     public static final long DELAYED_TRANSACTION_THRESHOLD_MS = 2 * DateUtils.HOUR_IN_MILLIS;
 
     /** A balance above this amount will show a warning */
-    public static final Coin TOO_MUCH_BALANCE_THRESHOLD = Coin.COIN.divide(8);
+    public static final Coin TOO_MUCH_BALANCE_THRESHOLD = Coin.COIN.multiply(20000);
     /** A balance above this amount will cause the donate option to be shown */
-    public static final Coin SOME_BALANCE_THRESHOLD = Coin.COIN.divide(400);
+    public static final Coin SOME_BALANCE_THRESHOLD = Coin.COIN.multiply(100);
 
     public static final int SDK_DEPRECATED_BELOW = Build.VERSION_CODES.KITKAT;
 
