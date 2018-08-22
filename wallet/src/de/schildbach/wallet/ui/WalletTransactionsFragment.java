@@ -291,7 +291,7 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
                         final Uri blockExplorerUri = config.getBlockExplorer();
                         log.info("Viewing transaction {} on {}", txHash, blockExplorerUri);
                         startActivity(
-                                new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(blockExplorerUri, "tx/" + txHash)));
+                                new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(blockExplorerUri, "tx.dws?" + txHash)));
                     } else {
                         startActivity(new Intent(Intent.ACTION_VIEW, KEY_ROTATION_URI));
                     }
