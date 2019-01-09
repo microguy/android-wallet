@@ -78,8 +78,8 @@ android {
         }
     }
     defaultConfig {
-        versionCode 62900
-        versionName "6.29"
+        versionCode 62903
+        versionName "6.29.2"
 
 
     }
