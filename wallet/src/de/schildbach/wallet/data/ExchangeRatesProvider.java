@@ -253,6 +253,7 @@ public class ExchangeRatesProvider extends ContentProvider {
             if (result == null)
                 return null;
         }
+        btcRate = (Double)result;
 
         final Call call = Constants.HTTP_CLIENT.newCall(request.build());
         try {
