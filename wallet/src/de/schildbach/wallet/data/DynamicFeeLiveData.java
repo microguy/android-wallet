@@ -91,6 +91,7 @@ public class DynamicFeeLiveData extends LiveData<Map<FeeCategory, Coin>> {
     private Map<FeeCategory, Coin> loadInBackground() {
         try {
             final Map<FeeCategory, Coin> staticFees = parseFees(assets.open(Constants.Files.FEES_FILENAME));
+            return staticFees;/*
             fetchDynamicFees(dynamicFeesUrl, tempFile, dynamicFeesFile, userAgent);
             if (!dynamicFeesFile.exists())
                 return staticFees;
@@ -124,7 +125,7 @@ public class DynamicFeeLiveData extends LiveData<Map<FeeCategory, Coin>> {
                             dynamicFee.toFriendlyString(), lowerBound.toFriendlyString());
                 }
             }
-            return dynamicFees;
+            return dynamicFees;*/
         } catch (final IOException x) {
             // Should not happen
             throw new RuntimeException(x);
