@@ -12,8 +12,7 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionConfidence;
-import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.core.UTXO;
 import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,9 +26,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.R;
@@ -42,19 +42,13 @@ import de.schildbach.wallet.util.Io;
 public class RequestWalletBalanceTaskChainz {
     private final Handler backgroundHandler;
     private final Handler callbackHandler;
-    private final ResultCallback resultCallback;
+    private final RequestWalletBalanceTask.ResultCallback resultCallback;
     @Nullable
     private final String userAgent;
 
     private static final Logger log = LoggerFactory.getLogger(RequestWalletBalanceTask.class);
 
-    public interface ResultCallback {
-        void onResult(Collection<Transaction> transactions);
-
-        void onFail(int messageResId, Object... messageArgs);
-    }
-
-    public RequestWalletBalanceTaskChainz(final Handler backgroundHandler, final ResultCallback resultCallback, @Nullable final String userAgent) {
+    public RequestWalletBalanceTaskChainz(final Handler backgroundHandler, final RequestWalletBalanceTask.ResultCallback resultCallback, @Nullable final String userAgent) {
         this.backgroundHandler = backgroundHandler;
         this.callbackHandler = new Handler(Looper.myLooper());
         this.resultCallback = resultCallback;
@@ -121,38 +115,23 @@ public class RequestWalletBalanceTaskChainz {
                         final JSONArray jsonOutputs = jsonData.getJSONArray("unspent_outputs");
 
                         final Map<Sha256Hash, Transaction> transactions = new HashMap<Sha256Hash, Transaction>(jsonOutputs.length());
+                        final Set<UTXO> utxos = new HashSet<UTXO>(jsonOutputs.length());
 
                         for (int i = 0; i < jsonOutputs.length(); i++) {
                             final JSONObject jsonOutput = jsonOutputs.getJSONObject(i);
 
-                            final Sha256Hash uxtoHash = Sha256Hash.wrap(jsonOutput.getString("tx_hash"));
-                            final int uxtoIndex = jsonOutput.getInt("tx_ouput_n");
-                            final byte[] uxtoScriptBytes = ScriptBuilder.createOutputScript(addresses[0]).getProgram();
-                            final Coin uxtoValue = Coin.valueOf(Long.parseLong(jsonOutput.getString("value")));
+                            final Sha256Hash utxoHash = Sha256Hash.wrap(jsonOutput.getString("tx_hash"));
+                            final int utxoIndex = jsonOutput.getInt("tx_ouput_n");
+                            final byte[] utxoScriptBytes = ScriptBuilder.createOutputScript(addresses[0]).getProgram();
+                            final Coin utxoValue = Coin.valueOf(Long.parseLong(jsonOutput.getString("value")));
 
-                            Transaction tx = transactions.get(uxtoHash);
-                            if (tx == null) {
-                                tx = new FakeTransaction(Constants.NETWORK_PARAMETERS, uxtoHash);
-                                tx.getConfidence().setConfidenceType(TransactionConfidence.ConfidenceType.BUILDING);
-                                transactions.put(uxtoHash, tx);
-                            }
-
-                            if (tx.getOutputs().size() > uxtoIndex)
-                                throw new IllegalStateException("cannot reach index " + uxtoIndex + ", tx already has " + tx.getOutputs().size()
-                                        + " outputs");
-
-                            // fill with dummies
-                            while (tx.getOutputs().size() < uxtoIndex)
-                                tx.addOutput(new TransactionOutput(Constants.NETWORK_PARAMETERS, tx, Coin.NEGATIVE_SATOSHI, new byte[]{}));
-
-                            // add the real output
-                            final TransactionOutput output = new TransactionOutput(Constants.NETWORK_PARAMETERS, tx, uxtoValue, uxtoScriptBytes);
-                            tx.addOutput(output);
+                            UTXO utxo = new UTXO(utxoHash, utxoIndex, utxoValue, 0, false, ScriptBuilder.createOutputScript(addresses[0]), addresses[0].toString());
+                            utxos.add(utxo);
                         }
 
                         log.info("fetched unspent outputs from {}", url);
 
-                        onResult(transactions.values());
+                        onResult(utxos);
                     } else {
                         final String responseMessage = connection.getResponseMessage();
 
@@ -184,7 +163,7 @@ public class RequestWalletBalanceTaskChainz {
         });
     }
 
-    protected void onResult(final Collection<Transaction> transactions) {
+    protected void onResult(final Set<UTXO> transactions) {
         callbackHandler.post(new Runnable() {
             @Override
             public void run() {

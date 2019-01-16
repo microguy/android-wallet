@@ -516,7 +516,10 @@ public class SweepWalletFragment extends Fragment {
 
         final Address address = viewModel.walletToSweep.getImportedKeys().iterator().next()
                 .toAddress(Constants.NETWORK_PARAMETERS);
-        new RequestWalletBalanceTask(backgroundHandler, callback).requestWalletBalance(activity.getAssets(), address);
+        if(Constants.GOLDCOIN_ELECTRUM_SUPPORT)
+            new RequestWalletBalanceTask(backgroundHandler, callback).requestWalletBalance(activity.getAssets(), address);
+        else
+            new RequestWalletBalanceTaskChainz(backgroundHandler, callback, application.httpUserAgent()).requestWalletBalance(address);
     }
 
     private void setState(final State state) {
