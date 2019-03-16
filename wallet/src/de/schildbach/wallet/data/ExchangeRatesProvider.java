@@ -389,7 +389,7 @@ public class ExchangeRatesProvider extends ContentProvider {
         // Keep the LTC rate around for a bit
         Double btcRate = Double.valueOf(0.0);
         String currency = "BTC";
-        String url = "https://bittrex.com/api/v1.1/public/getticker?market=btc-gld";
+        String url = "https://bittrex.com/api/v1.1/public/getticker?market=btc-glc";
 
 
         try {
