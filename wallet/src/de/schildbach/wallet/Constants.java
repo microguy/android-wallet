@@ -219,7 +219,7 @@ public final class Constants {
 
     private static final Logger log = LoggerFactory.getLogger(Constants.class);
 
-    private static final String BITEASY_API_URL_PROD = "https://chainz.cryptoid.info/gld/api.dws?q=unspent";
+    private static final String BITEASY_API_URL_PROD = "https://chainz.cryptoid.info/glc/api.dws?q=unspent";
     private static final String BITEASY_API_URL_TEST = "https://api.biteasy.com/v2/btc/testnet/";
     /** Base URL for blockchain API. */
     public static final String BITEASY_API_URL = NETWORK_PARAMETERS.getId().equals(NetworkParameters.ID_MAINNET) ? BITEASY_API_URL_PROD
