@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.Locale;
@@ -59,7 +60,9 @@ import android.text.format.DateUtils;
 
 import de.schildbach.wallet.util.Io;
 import okhttp3.Call;
+import okhttp3.ConnectionSpec;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -132,7 +135,7 @@ public class ExchangeRatesProvider extends ContentProvider {
         if (!offline && (lastUpdated == 0 || now - lastUpdated > UPDATE_FREQ_MS)) {
             Map<String, ExchangeRate> newExchangeRates = null;
             if (newExchangeRates == null)
-                newExchangeRates = requestExchangeRates();
+                newExchangeRates = requestExchangeRatesBackup();
 
             if (newExchangeRates != null) {
                 exchangeRates = newExchangeRates;
@@ -432,6 +435,65 @@ public class ExchangeRatesProvider extends ContentProvider {
             x.printStackTrace();
         } catch (final JSONException x) {
             x.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private static String COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/goldcoin?localization=false&community_data=false&developer_data=false&sparkline=false";
+    private static final String COINGECKO_SOURCE = "CoinGecko.com";
+
+
+    private Map<String, ExchangeRate> requestExchangeRatesBackup() {
+        final Stopwatch watch = Stopwatch.createStarted();
+
+        final Request.Builder request = new Request.Builder();
+        request.url(COINGECKO_URL);
+        request.header("User-Agent", userAgent);
+
+        final Call call = Constants.HTTP_CLIENT.newCall(request.build());
+        try {
+            final Response response = call.execute();
+            if (response.isSuccessful()) {
+                final String content = response.body().string();
+                final JSONObject head = new JSONObject(content);
+                final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
+
+                //check for correct information
+                if(head.getString("id").equals("goldcoin")) {
+                    JSONObject marketData = head.getJSONObject("market_data");
+                    JSONObject currentPrice = marketData.getJSONObject("current_price");
+
+                    for (final Iterator<String> i = currentPrice.keys(); i.hasNext(); ) {
+                        final String currencyCode = i.next();
+                        final String fiatCurrencyCode = currencyCode.toUpperCase();
+                        if (!fiatCurrencyCode.equals(MonetaryFormat.CODE_BTC)
+                                && !fiatCurrencyCode.equals(MonetaryFormat.CODE_MBTC)
+                                && !fiatCurrencyCode.equals(MonetaryFormat.CODE_UBTC)) {
+                            final String exchangeRate = currentPrice.getString(currencyCode);//head.getJSONObject(currencyCode);
+                            try {
+                                final Fiat rate = parseFiatInexact(fiatCurrencyCode, exchangeRate);
+                                if (rate.signum() > 0)
+                                    rates.put(fiatCurrencyCode, new ExchangeRate(
+                                            new org.bitcoinj.utils.ExchangeRate(rate), COINGECKO_SOURCE));
+                            } catch (final IllegalArgumentException x) {
+                                log.warn("problem fetching {} exchange rate from {}: {}", currencyCode,
+                                        COINGECKO_URL, x.getMessage());
+                            }
+                        }
+                    }
+
+                    watch.stop();
+                    log.info("fetched exchange rates from {}, {} chars, took {}", COINGECKO_URL, content.length(),
+                            watch);
+
+                    return rates;
+                }
+            } else {
+                log.warn("http status {} when fetching exchange rates from {}", response.code(), COINGECKO_URL);
+            }
+        } catch (final Exception x) {
+            log.warn("problem fetching exchange rates from " + COINGECKO_URL, x);
         }
 
         return null;
