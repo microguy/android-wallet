@@ -1,10 +1,29 @@
 GoldCoin Wallet
+v6.33
+* Update to Bitcoin Wallet 6.33
+
+v6.29
+* Upgrade to Bitcoin Wallet 6.29
 
 v4.58.6
 * Update exchange rates to use Bittrex (1st), Cryptopia (2nd)
 
 Bitcoin Wallet
-v6.29
+v6.33
+
+* Fix rarely occurring crash when backing up the wallet.
+
+v6.32
+
+* Remove link to Google+ community.
+* Update link to direct APK download.
+
+v6.31
+
+* For Android 9.0 (Pie) and above, the FOREGROUND_SERVICE permission is now being requested.
+* Adds a network security configuration.
+
+v6.29-v6.30
 
 * The app now builds reproducible.
 
