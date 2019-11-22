@@ -146,8 +146,11 @@ public class Configuration {
     }
 
     public Uri getBlockExplorer() {
-        return Uri.parse(prefs.getString(PREFS_KEY_BLOCK_EXPLORER,
+        Uri explorer = Uri.parse(prefs.getString(PREFS_KEY_BLOCK_EXPLORER,
                 res.getStringArray(R.array.preferences_block_explorer_values)[0]));
+        if(explorer.toString().contains("gld"))
+            explorer = Uri.parse(res.getStringArray(R.array.preferences_block_explorer_values)[0]);
+        return explorer;
     }
 
     public boolean remindBalance() {
