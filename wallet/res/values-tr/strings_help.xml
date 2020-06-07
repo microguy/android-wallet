@@ -3,7 +3,7 @@
   <string name="help_wallet">
 <![CDATA[
 		<p>
-			Ekranın sol üst köşesinde, dengenizi GoldCoins ve bir seçilen ulusal para birimi cinsinden görüntüler.
+			Ekranın sol üst köşesinde, dengenizi Goldcoins ve bir seçilen ulusal para birimi cinsinden görüntüler.
 			Ulusal para birimleri listesine gitmek için hafifçe vurun ve varsayılan olarak seçmek için para birimlerinden birine hafifçe dokunun.
 		</p>
 		<p>
@@ -23,18 +23,18 @@
   <string name="help_request_coins">
 <![CDATA[
 		<p>
-			Bu diyaloğu kullanarak başka bir kişiden GoldCoin talep edebilirsiniz (bu kişinin GoldCoin Wallet uygulamasını cihazında kurmuş olması gerekir).
+			Bu diyaloğu kullanarak başka bir kişiden Goldcoin talep edebilirsiniz (bu kişinin Goldcoin Wallet uygulamasını cihazında kurmuş olması gerekir).
 		</p>
 		<p>
-			İlk olarak talep edilen GoldCoin miktarını girebilirsiniz.
+			İlk olarak talep edilen Goldcoin miktarını girebilirsiniz.
 		</p>
 		<p>
 			Ardından ya diğer kişi tarafından taranacak bir QR code oluşturmanız,
 			ya da uzaktaki bir kişiye etkinlik çubuğunda paylaş düğmesiyle talebinizi göndermeniz gerekir.
-			Bu kişinin GoldCoin bağlantısını tıklaması gerekecektir.
+			Bu kişinin Goldcoin bağlantısını tıklaması gerekecektir.
 		</p>
 		<p>
-			Her durumda diğer kişiye GoldCoin göndermesi için tüm seçenekleri doldurulmuş bir diyalog gösterilecektir.
+			Her durumda diğer kişiye Goldcoin göndermesi için tüm seçenekleri doldurulmuş bir diyalog gösterilecektir.
 			Kabul ederse tüm yapması gereken muameleyi yollamaktır.
 		</p>
 	]]>
@@ -42,16 +42,16 @@
   <string name="help_send_coins">
 <![CDATA[
 		<p>
-			GoldCoin gönderme prosedürünü başlattınız.
-			Buraya ya ana ekrandan ya da mobil ağ tarayıcınızda bir GoldCoin bağlantısına tıklayarak geldiniz.
+			Goldcoin gönderme prosedürünü başlattınız.
+			Buraya ya ana ekrandan ya da mobil ağ tarayıcınızda bir Goldcoin bağlantısına tıklayarak geldiniz.
 		</p>
 		<p>
-			İlk olarak ödeme yapacağınız GoldCoin adresini girmelisiniz.
+			İlk olarak ödeme yapacağınız Goldcoin adresini girmelisiniz.
 			Adres defterinizde bilinen adreslere dayanılarak adres otomatik olarak tamamlanacaktır.
-			Ayrıca etkinlik çubuğunda QR düğmesine dokunarak GoldCoin adresi ya da talebi içeren QR kodlarını tarayabilirsiniz.
+			Ayrıca etkinlik çubuğunda QR düğmesine dokunarak Goldcoin adresi ya da talebi içeren QR kodlarını tarayabilirsiniz.
 		</p>
 		<p>
-			Bunun ardından o anda ne kadar GoldCoin harcayabileceğinizi görüntüleyebilirsiniz.
+			Bunun ardından o anda ne kadar Goldcoin harcayabileceğinizi görüntüleyebilirsiniz.
 			Varsa ana ekrandaki bakiye ile farklılıklar henüz teyit edilmemiştir ve dolayısıyla henüz harcanamaz.
 		</p>
 		<p>
@@ -59,7 +59,7 @@
 		</p>
 		<p>
 			Çevrimdışı olduğunuz sırada bir muamele girebilirsiniz.
-			GoldCoin Wallet uygulamasının sonraki açılışında gönderilir.
+			Goldcoin Wallet uygulamasının sonraki açılışında gönderilir.
 			Bir muamelenin mümkün olduğu kadar çabuk işlenmesini istiyorsanız bağlantınızın iyi olduğundan (mesela WLAN ile).
 		</p>
 		<p>
@@ -72,20 +72,20 @@
   <string name="help_safety">
 <![CDATA[
 		<p>
-			<b>GoldCoinlerinizin güvenliği hakkında önemli noktalar:</b>
+			<b>Goldcoinlerinizin güvenliği hakkında önemli noktalar:</b>
 		</p>
 		<p>
-			GoldCoin cüzdanınızdaki GoldCoinler cihazınızda saklanır.
-			<b>Cihazınızı kaybederseniz GoldCoinlerinizi de kaybedersiniz.</b>
+			Goldcoin cüzdanınızdaki Goldcoinler cihazınızda saklanır.
+			<b>Cihazınızı kaybederseniz Goldcoinlerinizi de kaybedersiniz.</b>
 			Tıpkı fiziki cüzdanınızdaki para gibi.
 		</p>
 		<p>
-			<b>GoldCoin Wallet</b> uygulamasını kaldırmadan önce (ya da uygulama verilerini/cihazınızı sıfırlamadan önce) <b>tüm GoldCoinlerinizi başka bir cüzdana aktarınız</b>.
-			Kalan tüm GoldCoinler kaybolacaktır.
+			<b>Goldcoin Wallet</b> uygulamasını kaldırmadan önce (ya da uygulama verilerini/cihazınızı sıfırlamadan önce) <b>tüm Goldcoinlerinizi başka bir cüzdana aktarınız</b>.
+			Kalan tüm Goldcoinler kaybolacaktır.
 		</p>
 		<p>
 			<b>Muameleler geri alınamaz</b>.
-			GoldCoinlerinizi yanlış bir adrese yollarsanız, bunları geri almak için alıcıyı tanımanız ve onun geri yollamayı kabul etmeniz dışında hiçbir yol yoktur.
+			Goldcoinlerinizi yanlış bir adrese yollarsanız, bunları geri almak için alıcıyı tanımanız ve onun geri yollamayı kabul etmeniz dışında hiçbir yol yoktur.
 		</p>
 		<p>
 			<b>Android cihazınızı güvenli kullanın!</b>
@@ -94,7 +94,7 @@
 		</p>
 		<p>
 			Riski sınırlayın!
-			<b>GoldCoin Wallet uygulamasını sadece küçük tutarlar için kullanınız</b>.
+			<b>Goldcoin Wallet uygulamasını sadece küçük tutarlar için kullanınız</b>.
 		</p>
 	]]>
 	</string>
@@ -104,13 +104,13 @@
             <b>Teknik notlar:</b>
         </p>
         <p>
-            Bir SPV/hafif cüzdan olarak GoldCoin Wallet As en çok ispatlanmış zinciri takip eder (ki buna bazen \"en uzun zincir\", \"kazanan zincir\" veya \"GoldCoin blok zinciri\" de denir).
+            Bir SPV/hafif cüzdan olarak Goldcoin Wallet As en çok ispatlanmış zinciri takip eder (ki buna bazen \"en uzun zincir\", \"kazanan zincir\" veya \"Goldcoin blok zinciri\" de denir).
             Sadece gelen ödemeleri alacak ve o zincirde ödeme yapabileceksiniz.
-            Azınlık zincirlerindeki yani daha az ispatlanmış zincirlerdeki GoldCoinler için hiçbir garanti verilemez.
+            Azınlık zincirlerindeki yani daha az ispatlanmış zincirlerdeki Goldcoinler için hiçbir garanti verilemez.
         </p>
         <p>
             Geçmişte azınlık anahtarları daima çok hızlı bir şekilde anlamsız bir hale gelmişlerdir.
-            Eğer her şeye rağmen bir azınlık zincirini takip etmek istiyorsanız, sadece istediğiniz zinciri zorlayacak bir GoldCoind uygulamasına bağlanmak için \"güvenli eş\" işlevini kullanmanız tavsiye edilir.
+            Eğer her şeye rağmen bir azınlık zincirini takip etmek istiyorsanız, sadece istediğiniz zinciri zorlayacak bir Goldcoind uygulamasına bağlanmak için \"güvenli eş\" işlevini kullanmanız tavsiye edilir.
             Şayet cüzdanınız ve güvenli eş arasındaki şebeke güvenilir değilse, bu bağlantıyı doğrulamak için bir VPN (sanal özel ağ) kullanın.
         </p>
     ]]>

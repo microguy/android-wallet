@@ -1,4 +1,5 @@
-res/drawable-*/ic_app_color_48dp.png
-res/drawable-*/stat_notify_received.png
-res/mipmap-*hdpi/
+#res/drawable-*/ic_app_color_48dp.png
+#res/drawable-*/stat_notify_received.png
+#res/mipmap-*hdpi/
 .externalNativeBuild/
+.cxx

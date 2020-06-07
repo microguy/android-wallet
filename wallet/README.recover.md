@@ -4,9 +4,9 @@ Recovering Bitcoins
 ## PROLOGUE
 
 
-This document describes how you can use a backup file on a standard PC to recover your GoldCoins.
+This document describes how you can use a backup file on a standard PC to recover your Goldcoins.
 Normally, this shouldn't be needed. It is much preferred to just use **Options > Safety > Restore wallet**
-from within the GoldCoin Wallet app if you can. This guide is only meant for rare cases:
+from within the Goldcoin Wallet app if you can. This guide is only meant for rare cases:
 
 - Your Android device is destroyed or missing and you do not want or cannot get a new Android
   device.
@@ -132,7 +132,7 @@ datetime string after each key is the birthdate of that key which you can ignore
 of this one-time recovery.
 
 You can import each individual key into a PC wallet like
-or [GoldCoin Core](https://bitcoincore.org/).
+or [Goldcoin Core](https://bitcoincore.org/).
 
 As soon as you see your whole balance again, empty your entire wallet to the desired destination
 wallet. Please do not continue to use the imported wallet. Remember you just operated on

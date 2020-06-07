@@ -8,7 +8,7 @@ storage:
 	Testnet: /data/data/com.goldcoin.wallet_test/files/wallet-protobuf-testnet (MODE_WORLD_READABLE | MODE_WORLD_WRITEABLE)
 
 The wallet file format is not compatible to wallet.dat (Satoshi client). Rather, it uses a custom protobuf format
-which should be compatible between clients using GoldCoinj.
+which should be compatible between clients using Goldcoinj.
 
 Certain actions cause automatic rolling backups of your wallet to app-private storage:
 
@@ -18,7 +18,7 @@ Certain actions cause automatic rolling backups of your wallet to app-private st
 
 Your wallet can be manually backed up to and restored from external storage:
 
-	Mainnet: /sdcard/Download/GoldCoin-wallet-backup-<yyyy-MM-dd>
+	Mainnet: /sdcard/Download/Goldcoin-wallet-backup-<yyyy-MM-dd>
 
 	Testnet: /sdcard/Download/goldcoin-wallet-backup-testnet-<yyyy-MM-dd>
 
@@ -68,7 +68,7 @@ and switch to it. Use
 
 to download the necessary API level.
 
-Finally, you can build GoldCoin Wallet and sign it with your development key. Again in your workspace,
+Finally, you can build Goldcoin Wallet and sign it with your development key. Again in your workspace,
 use
 
 	# first time only
@@ -144,7 +144,7 @@ corrected manually.
 
 NFC (Near field communication)
 
-GoldCoin Wallet supports reading GoldCoin requests via NFC, either from a passive NFC tag or from
+Goldcoin Wallet supports reading Goldcoin requests via NFC, either from a passive NFC tag or from
 another NFC capable Android device that is requesting coins.
 
 For this to work, just enable NFC in your phone and hold your phone to the tag or device (with
@@ -158,26 +158,26 @@ Instructions for preparing an NFC tag with your address:
 
 - Some tags have less than 50 bytes capacity, those won't work. 1 KB tags recommended.
 
-- The tag needs to contain a GoldCoin URI. You can construct one with the "Request coins" dialog,
+- The tag needs to contain a Goldcoin URI. You can construct one with the "Request coins" dialog,
   then share with messaging or email. You can also construct the URI manually. Example for Mainnet:
   goldcoin:1G2Y2jP5YFZ5RGk2PXaeWwbeA5y1ZtFhoL
 
 - The type of the message needs to be URI or URL (not Text).
 
 - If you put your tag at a public place, don't forget to enable write protect. Otherwise, someone
-  could overwrite the tag with his own GoldCoin address.
+  could overwrite the tag with his own Goldcoin address.
 
 
 GOLDCOINJ
 
-GoldCoin Wallet uses goldcoinj for GoldCoin specific logic:
+Goldcoin Wallet uses goldcoinj for Goldcoin specific logic:
 
 	https://github.com/Stouse49/goldcoinj
 
 
 EXCHANGE RATES
 
-GoldCoin Wallet reads this feed from "BitcoinAverage" for getting exchange rates:
+Goldcoin Wallet reads this feed from "BitcoinAverage" for getting exchange rates:
 
 	https://api.bitcoinaverage.com/custom/abw
 
@@ -192,7 +192,7 @@ If the above feed is not available, the feed from "Blockchain.info" is fetched i
 
 SWEEPING WALLETS
 
-For sweeping wallets, GoldCoin Wallet uses an API by biteasy to query for unspent transaction
+For sweeping wallets, Goldcoin Wallet uses an API by biteasy to query for unspent transaction
 outputs:
 
 	https://api.biteasy.com/v2/btc/mainnet/outputs

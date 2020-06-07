@@ -3,11 +3,11 @@
   <string name="help_wallet">
 <![CDATA[
 		<p>
-			O canto superior esquerdo da tela exibe o seu saldo em GoldCoins e em uma moeda nacional.
+			O canto superior esquerdo da tela exibe o seu saldo em Goldcoins e em uma moeda nacional.
 			Toque para ver a lista de moedas nacionais, e toque em uma delas para selecioná-la como moeda padrão.
 		</p>
 		<p>
-			O código QR no canto superior direito contém o seu endereço de GoldCoin atual e pode ser usado para ser lido por outro dispositivo.
+			O código QR no canto superior direito contém o seu endereço de Goldcoin atual e pode ser usado para ser lido por outro dispositivo.
 			Toque no código QR para ampliá-lo.
 		</p>
 		<p>
@@ -16,7 +16,7 @@
 			Os pagamentos recebidos são exibidos em verde e os realizados em vermelho.
 		</p>
 		<p>
-			Você pode enviar ou solicitar GoldCoins tocando nos botões na barra de ação.
+			Você pode enviar ou solicitar Goldcoins tocando nos botões na barra de ação.
 			Mais opções estão disponíveis no menu de opções.
 		</p>
 	]]>
@@ -24,18 +24,18 @@
   <string name="help_request_coins">
 <![CDATA[
 		<p>
-			Usando essa tela, você consegue solicitar GoldCoins para outra pessoa (que também já tenha instalado uma carteira GoldCoin).
+			Usando essa tela, você consegue solicitar Goldcoins para outra pessoa (que também já tenha instalado uma carteira Goldcoin).
 		</p>
 		<p>
-			Primeiro, você pode opcionalmente inserir uma quantidade de GoldCoins a ser solicitada.
+			Primeiro, você pode opcionalmente inserir uma quantidade de Goldcoins a ser solicitada.
 		</p>
 		<p>
 			Um código QR será gerado e ele deve ser escaneado pela outra pessoa.
 			Você também pode enviar sua solicitação para uma pessoa remotamente, usando o botão compartilhar na barra de ações.
-			A outra pessoa deverá clicar na GoldCoin URL.
+			A outra pessoa deverá clicar na Goldcoin URL.
 		</p>
 		<p>
-			A solicitação irá mostrar para a outra pessoa uma caixa de diálogo para o envio de GoldCoins com todos os campos pré-preenchidos.
+			A solicitação irá mostrar para a outra pessoa uma caixa de diálogo para o envio de Goldcoins com todos os campos pré-preenchidos.
 			Se ela concordar com o valor, tudo o que ela precisa fazer é enviar o pagamento.
 		</p>
 	]]>
@@ -43,16 +43,16 @@
   <string name="help_send_coins">
 <![CDATA[
 		<p>
-			Você iniciou o processo de envio de GoldCoins.
-			Você veio aqui através da tela principal ou após clicar em um endereço GoldCoin no seu navegador móvel.
+			Você iniciou o processo de envio de Goldcoins.
+			Você veio aqui através da tela principal ou após clicar em um endereço Goldcoin no seu navegador móvel.
 		</p>
 		<p>
-			Primeiro insira o endereço GoldCoin para o qual você quer realizar o pagamento.
+			Primeiro insira o endereço Goldcoin para o qual você quer realizar o pagamento.
 			O endereço será completado automaticamente através de entradas conhecidas em seu catálogo de endereços.
 			Ao usar o botão QR na barra de ações, você pode escanear códigos QR que contenham solicitações de pagamento.
 		</p>
 		<p>
-			Em seguida, você pode ver quantos GoldCoins você tem disponíveis para serem gastos no momento.
+			Em seguida, você pode ver quantos Goldcoins você tem disponíveis para serem gastos no momento.
 			Se houver uma diferença entre o valor disponível para ser gasto e o saldo da tela principal, é devido a transações ainda não confirmadas.
 		</p>
 		<p>
@@ -60,7 +60,7 @@
 		</p>
 		<p>
 			É possível inserir um pagamento mesmo estando offline.
-			Ele será enviado na próxima reinicialização da GoldCoin Wallet.
+			Ele será enviado na próxima reinicialização da Goldcoin Wallet.
 			Se você quer que um pagamento seja processado o mais rápido possível, certifique-se de que você está usando uma boa conexão (i.e. uma rede Wi-Fi).
 		</p>
 		<p>
@@ -76,8 +76,8 @@
 			<b>Notas importantes sobre segurança:</b>
 		</p>
 		<p>
-			As chaves para os seus GoldCoins são armazenadas no seu dispositivo.
-			<b>Se você o perder, você perderá suas chaves e, consequentemente, também perderá todos os seus GoldCoins.</b>
+			As chaves para os seus Goldcoins são armazenadas no seu dispositivo.
+			<b>Se você o perder, você perderá suas chaves e, consequentemente, também perderá todos os seus Goldcoins.</b>
 		</p>
 		<p>
 			Isso significa que você tem que fazer um <b>backup (cópia de segurança) da sua carteira</b>!
@@ -85,12 +85,12 @@
 			Mantenha o seu backup seguro e lembre a senha.
 		</p>
 		<p>
-			<b>Antes de instalar</b>, limpar as informações do aplicativo ou realizar um reset de seu dispositivo, <b>transfira seus GoldCoins para uma outra carteira</b>.
-			Os GoldCoins remanescentes serão perdidos.
+			<b>Antes de instalar</b>, limpar as informações do aplicativo ou realizar um reset de seu dispositivo, <b>transfira seus Goldcoins para uma outra carteira</b>.
+			Os Goldcoins remanescentes serão perdidos.
 		</p>
 		<p>
 			<b>Os pagamentos são irreversíveis</b>.
-			Se você enviar seus GoldCoins para um endereço desconhecido, não há quase nenhuma maneira de obtê-los de volta.
+			Se você enviar seus Goldcoins para um endereço desconhecido, não há quase nenhuma maneira de obtê-los de volta.
 		</p>
 		<p>
 			<b>Mantenha o seu dispositivo móvel seguro!</b>
@@ -100,7 +100,7 @@
 		</p>
 		<p>
 			Não se arrisque.
-			<b>Não carregue em sua carteira GoldCoin valores maiores do que você carregaria em uma carteira de bolso comum</b>.
+			<b>Não carregue em sua carteira Goldcoin valores maiores do que você carregaria em uma carteira de bolso comum</b>.
 		</p>
 	]]>
 	</string>
@@ -110,13 +110,13 @@
             <b>Notas Técnicas:</b>
         </p>
         <p>
-            Por ser uma carteira SPV (carteira light), a GoldCoin Wallet segue a corrente que tiver a maior prova-de-trabalho (também conhecida como a \"corrente mais comprida\", a \"corrente vencedora\" ou a \"blockchain do GoldCoin\").
+            Por ser uma carteira SPV (carteira light), a Goldcoin Wallet segue a corrente que tiver a maior prova-de-trabalho (também conhecida como a \"corrente mais comprida\", a \"corrente vencedora\" ou a \"blockchain do Goldcoin\").
             Você só irá poder receber e realizar pagamentos nesta corrente.
-            Nenhuma garantia pode ser feita sobre GoldCoins em correntes de minorias, ou seja, correntes que tenham menos prova-de-trabalho.
+            Nenhuma garantia pode ser feita sobre Goldcoins em correntes de minorias, ou seja, correntes que tenham menos prova-de-trabalho.
         </p>
         <p>
             No passado, as correntes de minorias se tornaram irrelevantes muito rapidamente.
-            No entanto, se você desejar seguir uma corrente de minoria, recomenda-se que você use a função \"peer de confiança\" para conectar-se exclusivamente à implementação GoldCoind que utiliza a sua corrente desejada.
+            No entanto, se você desejar seguir uma corrente de minoria, recomenda-se que você use a função \"peer de confiança\" para conectar-se exclusivamente à implementação Goldcoind que utiliza a sua corrente desejada.
             Se a rede estabelecendo a conexão entre a sua carteira e o peer de confiança não for confiável, use uma VPN para autenticá-la.
         </p>
     ]]>

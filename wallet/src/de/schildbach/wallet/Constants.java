@@ -123,7 +123,7 @@ public final class Constants {
     public static final int MAX_NUM_CONFIRMATIONS = 7;
 
     /** User-agent to use for network access. */
-    public static final String USER_AGENT = "GoldCoin Wallet";
+    public static final String USER_AGENT = "Goldcoin Wallet";
 
     /** Default currency to use if all default mechanisms fail. */
     public static final String DEFAULT_EXCHANGE_CURRENCY = "USD";
@@ -136,10 +136,10 @@ public final class Constants {
     public static final String REPORT_EMAIL = "stouse49@gmail.com";
 
     /** Subject line for manually reported issues. */
-    public static final String REPORT_SUBJECT_ISSUE = "GoldCoin Wallet: Reported issue";
+    public static final String REPORT_SUBJECT_ISSUE = "Goldcoin Wallet: Reported issue";
 
     /** Subject line for crash reports. */
-    public static final String REPORT_SUBJECT_CRASH = "GoldCoin Wallet: Crash report";
+    public static final String REPORT_SUBJECT_CRASH = "Goldcoin Wallet: Crash report";
 
     public static final char CHAR_HAIR_SPACE = '\u200a';
     public static final char CHAR_THIN_SPACE = '\u2009';
