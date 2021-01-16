@@ -65,6 +65,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Process;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
@@ -213,8 +214,14 @@ public final class ScanActivity extends AbstractWalletActivity
             sceneTransition.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    getWindow()
-                            .setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.black)));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            getWindow()
+                                    .setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.black)));
+                        }
+                    });
+
                 }
             });
             sceneTransition.start();
