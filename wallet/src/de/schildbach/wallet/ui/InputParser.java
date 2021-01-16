@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
-
 import org.bitcoin.protocols.payments.Protos;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
@@ -50,17 +48,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.hash.Hashing;
+import com.google.common.io.ByteStreams;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.UninitializedMessageException;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.R;
 import de.schildbach.wallet.data.PaymentIntent;
-import de.schildbach.wallet.util.Io;
 import de.schildbach.wallet.util.Qr;
 
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
+import androidx.annotation.Nullable;
 
 /**
  * @author Andreas Schildbach
@@ -209,7 +208,7 @@ public abstract class InputParser {
         public void parse() {
             if (PaymentProtocol.MIMETYPE_PAYMENTREQUEST.equals(inputType)) {
                 try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                    Io.copy(is, baos);
+                    ByteStreams.copy(is, baos);
                     parseAndHandlePaymentRequest(baos.toByteArray());
                 } catch (final IOException x) {
                     log.info("i/o error while fetching payment request", x);

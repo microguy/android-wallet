@@ -9,6 +9,38 @@ v4.58.6
 * Update exchange rates to use Bittrex (1st), Cryptopia (2nd)
 
 Bitcoin Wallet
+v6.41
+
+* Use the Unicode Bitcoin symbol if available.
+* Backup verification, just to be safe.
+* Update translations from Transifex.
+
+v6.40
+
+* Fix transaction fee is shown as a positive amount in the history.
+
+v6.39
+
+* Update the API used for sweeping paper wallets.
+
+v6.38
+
+* Update translations from Transifex.
+
+v6.36-v6.37
+
+* Remove ability to restore backups from list of base58-encoded private keys.
+
+v6.35
+
+* Fix crashes when opening dialogs at the wrong time.
+
+v6.34
+
+* Migrate support libraries and architecture components to AndroidX.
+* Add another backup reminder.
+
+>>>>>>> a8eb5f9dbb1463a032f4dfa06e72e9e603af462e
 v6.33
 
 * Fix rarely occurring crash when backing up the wallet.

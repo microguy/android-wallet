@@ -17,6 +17,8 @@
 
 package de.schildbach.wallet.ui.backup;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,6 +31,8 @@ import org.bitcoinj.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.CharStreams;
+
 import de.schildbach.wallet.Configuration;
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.R;
@@ -38,14 +42,11 @@ import de.schildbach.wallet.ui.AbstractWalletActivity;
 import de.schildbach.wallet.ui.DialogBuilder;
 import de.schildbach.wallet.ui.ShowPasswordCheckListener;
 import de.schildbach.wallet.util.Crypto;
-import de.schildbach.wallet.util.Io;
 import de.schildbach.wallet.util.WalletUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,12 +55,14 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnShowListener;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
@@ -71,7 +74,7 @@ public class RestoreWalletFromExternalDialogFragment extends DialogFragment {
     public static void show(final FragmentManager fm, final Uri backupUri) {
         final DialogFragment newFragment = new RestoreWalletFromExternalDialogFragment();
         final Bundle args = new Bundle();
-        args.putParcelable(KEY_BACKUP_URI, backupUri);
+        args.putParcelable(KEY_BACKUP_URI, checkNotNull(backupUri));
         newFragment.setArguments(args);
         newFragment.show(fm, FRAGMENT_TAG);
     }
@@ -102,7 +105,9 @@ public class RestoreWalletFromExternalDialogFragment extends DialogFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.backupUri = (Uri) getArguments().getParcelable(KEY_BACKUP_URI);
+        log.info("opening dialog {}", getClass().getName());
+
+        this.backupUri = checkNotNull((Uri) getArguments().getParcelable(KEY_BACKUP_URI));
 
         viewModel = ViewModelProviders.of(this).get(RestoreWalletViewModel.class);
     }
@@ -185,13 +190,13 @@ public class RestoreWalletFromExternalDialogFragment extends DialogFragment {
     private Wallet restoreWalletFromEncrypted(final InputStream cipher, final String password) throws IOException {
         final BufferedReader cipherIn = new BufferedReader(new InputStreamReader(cipher, StandardCharsets.UTF_8));
         final StringBuilder cipherText = new StringBuilder();
-        Io.copy(cipherIn, cipherText, Constants.BACKUP_MAX_CHARS);
+        CharStreams.copy(cipherIn, cipherText);
         cipherIn.close();
 
         final byte[] plainText = Crypto.decryptBytes(cipherText.toString(), password.toCharArray());
         final InputStream is = new ByteArrayInputStream(plainText);
 
-        return WalletUtils.restoreWalletFromProtobufOrBase58(is, Constants.NETWORK_PARAMETERS);
+        return WalletUtils.restoreWalletFromProtobuf(is, Constants.NETWORK_PARAMETERS);
     }
 
     public static class SuccessDialogFragment extends DialogFragment {
@@ -249,7 +254,7 @@ public class RestoreWalletFromExternalDialogFragment extends DialogFragment {
             final DialogFragment newFragment = new FailureDialogFragment();
             final Bundle args = new Bundle();
             args.putString(KEY_EXCEPTION_MESSAGE, exceptionMessage);
-            args.putParcelable(KEY_BACKUP_URI, backupUri);
+            args.putParcelable(KEY_BACKUP_URI, checkNotNull(backupUri));
             newFragment.setArguments(args);
             newFragment.show(fm, FRAGMENT_TAG);
         }
@@ -263,7 +268,7 @@ public class RestoreWalletFromExternalDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(final Bundle savedInstanceState) {
             final String exceptionMessage = getArguments().getString(KEY_EXCEPTION_MESSAGE);
-            final Uri backupUri = getArguments().getParcelable(KEY_BACKUP_URI);
+            final Uri backupUri = checkNotNull((Uri) getArguments().getParcelable(KEY_BACKUP_URI));
             final DialogBuilder dialog = DialogBuilder.warn(getContext(),
                     R.string.import_export_keys_dialog_failure_title);
             dialog.setMessage(getString(R.string.import_keys_dialog_failure, exceptionMessage));

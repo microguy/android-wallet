@@ -17,8 +17,6 @@
 
 package de.schildbach.wallet.ui;
 
-import javax.annotation.Nullable;
-
 import org.bitcoinj.core.Address;
 import org.bitcoinj.uri.BitcoinURI;
 import org.slf4j.Logger;
@@ -34,14 +32,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ShareCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
+import androidx.core.app.ShareCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * @author Andreas Schildbach
@@ -61,7 +60,7 @@ public class WalletAddressDialogFragment extends DialogFragment {
         final WalletAddressDialogFragment fragment = new WalletAddressDialogFragment();
 
         final Bundle args = new Bundle();
-        args.putSerializable(KEY_ADDRESS, address);
+        args.putString(KEY_ADDRESS, address.toBase58());
         if (addressLabel != null)
             args.putString(KEY_ADDRESS_LABEL, addressLabel);
         fragment.setArguments(args);
@@ -78,9 +77,15 @@ public class WalletAddressDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        log.info("opening dialog {}", getClass().getName());
+    }
+
+    @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final Bundle args = getArguments();
-        final Address address = (Address) args.getSerializable(KEY_ADDRESS);
+        final Address address = Address.fromBase58(Constants.NETWORK_PARAMETERS, args.getString(KEY_ADDRESS));
         final String addressStr = address.toBase58();
         final String addressLabel = args.getString(KEY_ADDRESS_LABEL);
 

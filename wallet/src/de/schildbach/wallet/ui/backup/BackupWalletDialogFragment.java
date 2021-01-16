@@ -17,24 +17,27 @@
 
 package de.schildbach.wallet.ui.backup;
 
-import static android.support.v4.util.Preconditions.checkState;
+import static androidx.core.util.Preconditions.checkState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
-
-import javax.annotation.Nullable;
 
 import org.bitcoinj.wallet.Protos;
 import org.bitcoinj.wallet.Wallet;
 import org.bitcoinj.wallet.WalletProtobufSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.CharStreams;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.R;
@@ -48,8 +51,6 @@ import de.schildbach.wallet.util.Iso8601Format;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnShowListener;
@@ -57,8 +58,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -69,6 +68,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
@@ -122,6 +126,8 @@ public class BackupWalletDialogFragment extends DialogFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        log.info("opening dialog {}", getClass().getName());
+
         viewModel = ViewModelProviders.of(this).get(BackupWalletViewModel.class);
     }
 
@@ -278,31 +284,48 @@ public class BackupWalletDialogFragment extends DialogFragment {
                         viewModel.wallet.removeObserver(this);
 
                         final Uri targetUri = intent.getData();
+                        final String target = uriToTarget(targetUri);
                         final String password = passwordView.getText().toString().trim();
                         checkState(!password.isEmpty());
                         wipePasswords();
                         dismiss();
 
-                        final Protos.Wallet walletProto = new WalletProtobufSerializer().walletToProto(wallet);
-
+                        byte[] plainBytes = null;
                         try (final Writer cipherOut = new OutputStreamWriter(
                                 activity.getContentResolver().openOutputStream(targetUri), StandardCharsets.UTF_8)) {
+                            final Protos.Wallet walletProto = new WalletProtobufSerializer().walletToProto(wallet);
                             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             walletProto.writeTo(baos);
                             baos.close();
-                            final byte[] plainBytes = baos.toByteArray();
+                            plainBytes = baos.toByteArray();
 
                             cipherOut.write(Crypto.encrypt(plainBytes, password.toCharArray()));
                             cipherOut.flush();
-                            application.getConfiguration().disarmBackupReminder();
 
-                            final String target = uriToTarget(targetUri);
                             log.info("backed up wallet to: '" + targetUri + "'"
                                     + (target != null ? " (" + target + ")" : ""));
+                        } catch (final IOException x) {
+                            log.error("problem backing up wallet", x);
+                            ErrorDialogFragment.showDialog(getFragmentManager(), x.toString());
+                        }
+
+                        try (final Reader cipherIn = new InputStreamReader(
+                                activity.getContentResolver().openInputStream(targetUri), StandardCharsets.UTF_8)) {
+                            final StringBuilder cipherText = new StringBuilder();
+                            CharStreams.copy(cipherIn, cipherText);
+                            cipherIn.close();
+
+                            final byte[] plainBytes2 = Crypto.decryptBytes(cipherText.toString(),
+                                    password.toCharArray());
+                            if (!Arrays.equals(plainBytes, plainBytes2))
+                                throw new IOException("verification failed");
+
+                            log.info("verified successfully: '" + targetUri + "'");
+                            application.getConfiguration().disarmBackupReminder();
                             SuccessDialogFragment.showDialog(getFragmentManager(),
                                     target != null ? target : targetUri.toString());
                         } catch (final IOException x) {
-                            log.error("problem backing up wallet", x);
+                            log.error("problem verifying backup", x);
                             ErrorDialogFragment.showDialog(getFragmentManager(), x.toString());
                         }
                     }

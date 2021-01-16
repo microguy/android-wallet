@@ -101,9 +101,6 @@ public final class Constants {
         public static final String ELECTRUM_SERVERS_FILENAME = "electrum-servers.txt";
     }
 
-    /** Maximum size of backups. Files larger will be rejected. */
-    public static final long BACKUP_MAX_CHARS = 10000000;
-
     /** Currency code for the wallet name resolver. */
     public static final String WALLET_NAME_CURRENCY_CODE = NETWORK_PARAMETERS.getId()
             .equals(NetworkParameters.ID_MAINNET) ? "gld" : "tgld";
@@ -143,6 +140,7 @@ public final class Constants {
 
     public static final char CHAR_HAIR_SPACE = '\u200a';
     public static final char CHAR_THIN_SPACE = '\u2009';
+    public static final char CHAR_BITCOIN = '\u20bf';
     public static final char CHAR_ALMOST_EQUAL_TO = '\u2248';
     public static final char CHAR_CHECKMARK = '\u2713';
     public static final char CURRENCY_PLUS_SIGN = '\uff0b';
@@ -174,7 +172,7 @@ public final class Constants {
     /** A balance above this amount will cause the donate option to be shown */
     public static final Coin SOME_BALANCE_THRESHOLD = Coin.COIN.multiply(100);
 
-    public static final int SDK_DEPRECATED_BELOW = Build.VERSION_CODES.KITKAT;
+    public static final int SDK_DEPRECATED_BELOW = Build.VERSION_CODES.LOLLIPOP;
 
     public static final int NOTIFICATION_ID_CONNECTED = 1;
     public static final int NOTIFICATION_ID_COINS_RECEIVED = 2;

@@ -36,13 +36,12 @@ import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.data.AddressBookDao;
 import de.schildbach.wallet.data.AppDatabase;
 import de.schildbach.wallet.ui.TransactionsAdapter.ListItem;
+import de.schildbach.wallet.ui.TransactionsAdapter.WarningType;
 import de.schildbach.wallet.ui.send.RaiseFeeDialogFragment;
 import de.schildbach.wallet.util.Qr;
 import de.schildbach.wallet.util.WalletUtils;
 
 import android.app.admin.DevicePolicyManager;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -52,8 +51,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -66,6 +63,10 @@ import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author Andreas Schildbach
@@ -106,6 +107,12 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
         setHasOptionsMenu(true);
 
         viewModel = ViewModelProviders.of(this).get(WalletTransactionsViewModel.class);
+        viewModel.direction.observe(this, new Observer<WalletTransactionsViewModel.Direction>() {
+            @Override
+            public void onChanged(final WalletTransactionsViewModel.Direction direction) {
+                activity.invalidateOptionsMenu();
+            }
+        });
         viewModel.transactions.observe(this, new Observer<Set<Transaction>>() {
             @Override
             public void onChanged(final Set<Transaction> transactions) {
@@ -113,6 +120,7 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
                     viewGroup.setDisplayedChild(1);
 
                     final WalletTransactionsViewModel.Direction direction = viewModel.direction.getValue();
+                    final WarningType warning = viewModel.warning.getValue();
                     final SpannableStringBuilder emptyText = new SpannableStringBuilder(
                             getString(direction == WalletTransactionsViewModel.Direction.SENT
                                     ? R.string.wallet_transactions_fragment_empty_text_sent
@@ -122,6 +130,13 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
                     if (direction != WalletTransactionsViewModel.Direction.SENT)
                         emptyText.append("\n\n")
                                 .append(getString(R.string.wallet_transactions_fragment_empty_text_howto));
+                    if (warning == WarningType.BACKUP) {
+                        final int start = emptyText.length();
+                        emptyText.append("\n\n")
+                                .append(getString(R.string.wallet_transactions_fragment_empty_remind_backup));
+                        emptyText.setSpan(new StyleSpan(Typeface.BOLD), start, emptyText.length(),
+                                SpannableStringBuilder.SPAN_POINT_MARK);
+                    }
                     emptyView.setText(emptyText);
                 } else {
                     viewGroup.setDisplayedChild(2);
@@ -132,7 +147,26 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
             @Override
             public void onChanged(final List<ListItem> listItems) {
                 adapter.submitList(listItems);
-                ViewModelProviders.of(activity).get(WalletViewModel.class).transactionsLoadingFinished();
+                ViewModelProviders.of(activity).get(WalletActivityViewModel.class).transactionsLoadingFinished();
+            }
+        });
+        viewModel.showBitmapDialog.observe(this, new Event.Observer<Bitmap>() {
+            @Override
+            public void onEvent(final Bitmap bitmap) {
+                BitmapFragment.show(getFragmentManager(), bitmap);
+            }
+        });
+        viewModel.showEditAddressBookEntryDialog.observe(this, new Event.Observer<Address>() {
+            @Override
+            public void onEvent(final Address address) {
+                EditAddressBookEntryFragment.edit(getFragmentManager(), address);
+            }
+        });
+        viewModel.showReportIssueDialog.observe(this, new Event.Observer<String>() {
+            @Override
+            public void onEvent(final String contextualData) {
+                ReportIssueDialogFragment.show(getFragmentManager(), R.string.report_issue_dialog_title_transaction,
+                        R.string.report_issue_dialog_message_issue, Constants.REPORT_SUBJECT_ISSUE, contextualData);
             }
         });
 
@@ -219,7 +253,6 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
         } else {
             return false;
         }
-        item.setChecked(true);
 
         viewModel.setDirection(direction);
         return true;
@@ -270,11 +303,12 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
             public boolean onMenuItemClick(final MenuItem item) {
                 switch (item.getItemId()) {
                 case R.id.wallet_transactions_context_edit_address:
-                    handleEditAddress(tx);
+                    viewModel.showEditAddressBookEntryDialog.setValue(new Event<>(txAddress));
                     return true;
 
                 case R.id.wallet_transactions_context_show_qr:
-                    handleShowQr();
+                    final Bitmap qrCodeBitmap = Qr.bitmap(Qr.encodeCompressBinary(txSerialized));
+                    viewModel.showBitmapDialog.setValue(new Event<>(qrCodeBitmap));
                     return true;
 
                 case R.id.wallet_transactions_context_raise_fee:
@@ -301,15 +335,6 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
                 return false;
             }
 
-            private void handleEditAddress(final Transaction tx) {
-                EditAddressBookEntryFragment.edit(getFragmentManager(), txAddress);
-            }
-
-            private void handleShowQr() {
-                final Bitmap qrCodeBitmap = Qr.bitmap(Qr.encodeCompressBinary(txSerialized));
-                BitmapFragment.show(getFragmentManager(), qrCodeBitmap);
-            }
-
             private void handleReportIssue(final Transaction tx) {
                 final StringBuilder contextualData = new StringBuilder();
                 try {
@@ -322,9 +347,7 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
                     contextualData.append("  confidence: ").append(tx.getConfidence()).append('\n');
                 contextualData.append(tx.toString());
 
-                ReportIssueDialogFragment.show(getFragmentManager(), R.string.report_issue_dialog_title_transaction,
-                        R.string.report_issue_dialog_message_issue, Constants.REPORT_SUBJECT_ISSUE,
-                        contextualData.toString());
+                viewModel.showReportIssueDialog.setValue(new Event<>(contextualData.toString()));
             }
         });
         popupMenu.show();
@@ -339,7 +362,9 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
     public void onWarningClick(final View view) {
         switch (warning()) {
         case BACKUP:
-            ((WalletActivity) activity).handleBackupWallet();
+            final WalletActivityViewModel viewModel = ViewModelProviders.of(getActivity())
+                    .get(WalletActivityViewModel.class);
+            viewModel.showBackupWalletDialog.setValue(Event.simple());
             break;
 
         case STORAGE_ENCRYPTION:

@@ -47,8 +47,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -59,11 +57,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
@@ -72,7 +72,7 @@ public final class WalletActivity extends AbstractWalletActivity {
     private WalletApplication application;
     private Handler handler = new Handler();
 
-    private WalletViewModel viewModel;
+    private WalletActivityViewModel viewModel;
     private AnimatorSet enterAnimation;
     private View contentView;
 
@@ -84,7 +84,7 @@ public final class WalletActivity extends AbstractWalletActivity {
         application = getWalletApplication();
         final Configuration config = application.getConfiguration();
 
-        viewModel = ViewModelProviders.of(this).get(WalletViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(WalletActivityViewModel.class);
 
         setContentView(R.layout.wallet_content);
         contentView = findViewById(android.R.id.content);
@@ -97,14 +97,52 @@ public final class WalletActivity extends AbstractWalletActivity {
                 invalidateOptionsMenu();
             }
         });
-        viewModel.enterAnimation.observe(this, new Observer<WalletViewModel.EnterAnimationState>() {
+        viewModel.showHelpDialog.observe(this, new Event.Observer<Integer>() {
             @Override
-            public void onChanged(final WalletViewModel.EnterAnimationState state) {
-                if (state == WalletViewModel.EnterAnimationState.WAITING) {
+            public void onEvent(final Integer messageResId) {
+                HelpDialogFragment.page(getSupportFragmentManager(), messageResId);
+            }
+        });
+        viewModel.showBackupWalletDialog.observe(this, new Event.Observer<Void>() {
+            @Override
+            public void onEvent(final Void v) {
+                BackupWalletDialogFragment.show(getSupportFragmentManager());
+            }
+        });
+        viewModel.showRestoreWalletDialog.observe(this, new Event.Observer<Void>() {
+            @Override
+            public void onEvent(final Void v) {
+                RestoreWalletDialogFragment.show(getSupportFragmentManager());
+            }
+        });
+        viewModel.showEncryptKeysDialog.observe(this, new Event.Observer<Void>() {
+            @Override
+            public void onEvent(final Void v) {
+                EncryptKeysDialogFragment.show(getSupportFragmentManager());
+            }
+        });
+        viewModel.showReportIssueDialog.observe(this, new Event.Observer<Void>() {
+            @Override
+            public void onEvent(final Void v) {
+                ReportIssueDialogFragment.show(getSupportFragmentManager(), R.string.report_issue_dialog_title_issue,
+                        R.string.report_issue_dialog_message_issue, Constants.REPORT_SUBJECT_ISSUE, null);
+            }
+        });
+        viewModel.showReportCrashDialog.observe(this, new Event.Observer<Void>() {
+            @Override
+            public void onEvent(final Void v) {
+                ReportIssueDialogFragment.show(getSupportFragmentManager(), R.string.report_issue_dialog_title_crash,
+                        R.string.report_issue_dialog_message_crash, Constants.REPORT_SUBJECT_CRASH, null);
+            }
+        });
+        viewModel.enterAnimation.observe(this, new Observer<WalletActivityViewModel.EnterAnimationState>() {
+            @Override
+            public void onChanged(final WalletActivityViewModel.EnterAnimationState state) {
+                if (state == WalletActivityViewModel.EnterAnimationState.WAITING) {
                     // API level 26: enterAnimation.setCurrentPlayTime(0);
                     for (final Animator animation : enterAnimation.getChildAnimations())
                         ((ValueAnimator) animation).setCurrentPlayTime(0);
-                } else if (state == WalletViewModel.EnterAnimationState.ANIMATING) {
+                } else if (state == WalletActivityViewModel.EnterAnimationState.ANIMATING) {
                     reportFullyDrawn();
                     enterAnimation.start();
                     enterAnimation.addListener(new AnimatorListenerAdapter() {
@@ -113,7 +151,7 @@ public final class WalletActivity extends AbstractWalletActivity {
                             viewModel.animationFinished();
                         }
                     });
-                } else if (state == WalletViewModel.EnterAnimationState.FINISHED) {
+                } else if (state == WalletActivityViewModel.EnterAnimationState.FINISHED) {
                     getWindow().getDecorView().setBackground(null);
                 }
             }
@@ -127,8 +165,8 @@ public final class WalletActivity extends AbstractWalletActivity {
         if (exchangeRatesFragment != null)
             exchangeRatesFragment.setVisibility(Constants.ENABLE_EXCHANGE_RATES ? View.VISIBLE : View.GONE);
 
-        if (savedInstanceState == null)
-            checkSavedCrashTrace();
+        if (savedInstanceState == null && CrashReporter.hasSavedCrashTrace())
+            viewModel.showReportCrashDialog.setValue(Event.simple());
 
         config.touchLastUsed();
 
@@ -341,16 +379,15 @@ public final class WalletActivity extends AbstractWalletActivity {
         super.onPrepareOptionsMenu(menu);
 
         final Resources res = getResources();
-        final String externalStorageState = Environment.getExternalStorageState();
 
-        menu.findItem(R.id.wallet_options_exchange_rates)
-                .setVisible(Constants.ENABLE_EXCHANGE_RATES && res.getBoolean(R.bool.show_exchange_rates_option));
+        final boolean showExchangeRatesOption = Constants.ENABLE_EXCHANGE_RATES
+                && res.getBoolean(R.bool.show_exchange_rates_option);
+        menu.findItem(R.id.wallet_options_exchange_rates).setVisible(showExchangeRatesOption);
         menu.findItem(R.id.wallet_options_sweep_wallet).setVisible(Constants.ENABLE_SWEEP_WALLET);
-        menu.findItem(R.id.wallet_options_restore_wallet)
-                .setEnabled(Environment.MEDIA_MOUNTED.equals(externalStorageState)
-                        || Environment.MEDIA_MOUNTED_READ_ONLY.equals(externalStorageState));
-        menu.findItem(R.id.wallet_options_backup_wallet)
-                .setEnabled(Environment.MEDIA_MOUNTED.equals(externalStorageState));
+        final String externalStorageState = Environment.getExternalStorageState();
+        final boolean enableRestoreWalletOption = Environment.MEDIA_MOUNTED.equals(externalStorageState)
+                || Environment.MEDIA_MOUNTED_READ_ONLY.equals(externalStorageState);
+        menu.findItem(R.id.wallet_options_restore_wallet).setEnabled(enableRestoreWalletOption);
         final Boolean isEncrypted = viewModel.walletEncrypted.getValue();
         if (isEncrypted != null) {
             final MenuItem encryptKeysOption = menu.findItem(R.id.wallet_options_encrypt_keys);
@@ -394,15 +431,15 @@ public final class WalletActivity extends AbstractWalletActivity {
             return true;
 
         case R.id.wallet_options_restore_wallet:
-            handleRestoreWallet();
+            viewModel.showRestoreWalletDialog.setValue(Event.simple());
             return true;
 
         case R.id.wallet_options_backup_wallet:
-            handleBackupWallet();
+            viewModel.showBackupWalletDialog.setValue(Event.simple());
             return true;
 
         case R.id.wallet_options_encrypt_keys:
-            handleEncryptKeys();
+            viewModel.showEncryptKeysDialog.setValue(Event.simple());
             return true;
 
         case R.id.wallet_options_preferences:
@@ -410,19 +447,19 @@ public final class WalletActivity extends AbstractWalletActivity {
             return true;
 
         case R.id.wallet_options_safety:
-            HelpDialogFragment.page(getSupportFragmentManager(), R.string.help_safety);
+            viewModel.showHelpDialog.setValue(new Event<>(R.string.help_safety));
             return true;
 
         case R.id.wallet_options_technical_notes:
-            HelpDialogFragment.page(getSupportFragmentManager(), R.string.help_technical_notes);
+            viewModel.showHelpDialog.setValue(new Event<>(R.string.help_technical_notes));
             return true;
 
         case R.id.wallet_options_report_issue:
-            handleReportIssue();
+            viewModel.showReportIssueDialog.setValue(Event.simple());
             return true;
 
         case R.id.wallet_options_help:
-            HelpDialogFragment.page(getSupportFragmentManager(), R.string.help_wallet);
+            viewModel.showHelpDialog.setValue(new Event<>(R.string.help_wallet));
             return true;
         }
 
@@ -442,28 +479,5 @@ public final class WalletActivity extends AbstractWalletActivity {
         // Camera/SurfaceView is used while the animation is running.
         enterAnimation.end();
         ScanActivity.startForResult(this, clickView, WalletActivity.REQUEST_CODE_SCAN);
-    }
-
-    public void handleBackupWallet() {
-        BackupWalletDialogFragment.show(getSupportFragmentManager());
-    }
-
-    public void handleRestoreWallet() {
-        RestoreWalletDialogFragment.show(getSupportFragmentManager());
-    }
-
-    public void handleEncryptKeys() {
-        EncryptKeysDialogFragment.show(getSupportFragmentManager());
-    }
-
-    private void handleReportIssue() {
-        ReportIssueDialogFragment.show(getSupportFragmentManager(), R.string.report_issue_dialog_title_issue,
-                R.string.report_issue_dialog_message_issue, Constants.REPORT_SUBJECT_ISSUE, null);
-    }
-
-    private void checkSavedCrashTrace() {
-        if (CrashReporter.hasSavedCrashTrace())
-            ReportIssueDialogFragment.show(getSupportFragmentManager(), R.string.report_issue_dialog_title_crash,
-                    R.string.report_issue_dialog_message_crash, Constants.REPORT_SUBJECT_CRASH, null);
     }
 }

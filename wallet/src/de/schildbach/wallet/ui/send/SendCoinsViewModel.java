@@ -19,8 +19,6 @@ package de.schildbach.wallet.ui.send;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.wallet.Wallet.BalanceType;
 
@@ -36,8 +34,10 @@ import de.schildbach.wallet.data.WalletLiveData;
 import de.schildbach.wallet.ui.AddressAndLabel;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 /**
  * @author Andreas Schildbach
@@ -56,6 +56,7 @@ public class SendCoinsViewModel extends AndroidViewModel {
     public final DynamicFeeLiveData dynamicFees;
     public final BlockchainStateLiveData blockchainState;
     public final WalletBalanceLiveData balance;
+    public final MutableLiveData<String> progress = new MutableLiveData<>();
 
     @Nullable
     public State state = null;

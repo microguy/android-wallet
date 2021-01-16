@@ -31,8 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.annotation.Nullable;
-
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.utils.Fiat;
 import org.bitcoinj.utils.MonetaryFormat;
@@ -57,8 +55,7 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.format.DateUtils;
-
-import de.schildbach.wallet.util.Io;
+import androidx.annotation.Nullable;
 import okhttp3.Call;
 import okhttp3.ConnectionSpec;
 import okhttp3.HttpUrl;
@@ -337,7 +334,7 @@ public class ExchangeRatesProvider extends ContentProvider {
             Reader reader = null;
             try {
                 reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024));
-                Io.copy(reader, content);
+                //Io.copy(reader, content);
                 final JSONObject head = new JSONObject(content.toString());
 
 				/*{

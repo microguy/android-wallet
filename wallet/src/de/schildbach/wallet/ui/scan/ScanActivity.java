@@ -20,8 +20,6 @@ package de.schildbach.wallet.ui.scan;
 import java.util.EnumMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +36,7 @@ import com.google.zxing.qrcode.QRCodeReader;
 import de.schildbach.wallet.R;
 import de.schildbach.wallet.ui.AbstractWalletActivity;
 import de.schildbach.wallet.ui.DialogBuilder;
+import de.schildbach.wallet.ui.Event;
 import de.schildbach.wallet.util.OnFirstPreDraw;
 
 import android.Manifest;
@@ -46,8 +45,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -68,11 +65,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Process;
 import android.os.Vibrator;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.TextureView;
@@ -81,6 +73,13 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
@@ -143,16 +142,16 @@ public final class ScanActivity extends AbstractWalletActivity
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         viewModel = ViewModelProviders.of(this).get(ScanViewModel.class);
-        viewModel.showPermissionWarnDialog.observe(this, new Observer<Void>() {
+        viewModel.showPermissionWarnDialog.observe(this, new Event.Observer<Void>() {
             @Override
-            public void onChanged(final Void v) {
+            public void onEvent(final Void v) {
                 WarnDialogFragment.show(getSupportFragmentManager(), R.string.scan_camera_permission_dialog_title,
                         getString(R.string.scan_camera_permission_dialog_message));
             }
         });
-        viewModel.showProblemWarnDialog.observe(this, new Observer<Void>() {
+        viewModel.showProblemWarnDialog.observe(this, new Event.Observer<Void>() {
             @Override
-            public void onChanged(final Void v) {
+            public void onEvent(final Void v) {
                 WarnDialogFragment.show(getSupportFragmentManager(), R.string.scan_camera_problem_dialog_title,
                         getString(R.string.scan_camera_problem_dialog_message));
             }
@@ -177,8 +176,10 @@ public final class ScanActivity extends AbstractWalletActivity
         cameraThread.start();
         cameraHandler = new Handler(cameraThread.getLooper());
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            log.info("missing {}, requesting", Manifest.permission.CAMERA);
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, 0);
+        }
 
         if (savedInstanceState == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             final Intent intent = getIntent();
@@ -260,10 +261,12 @@ public final class ScanActivity extends AbstractWalletActivity
     @Override
     public void onRequestPermissionsResult(final int requestCode, final String[] permissions,
             final int[] grantResults) {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             maybeOpenCamera();
-        else
-            viewModel.showPermissionWarnDialog.call();
+        } else {
+            log.info("missing {}, showing error", Manifest.permission.CAMERA);
+            viewModel.showPermissionWarnDialog.setValue(Event.simple());
+        }
     }
 
     private void maybeOpenCamera() {
@@ -376,7 +379,7 @@ public final class ScanActivity extends AbstractWalletActivity
                 cameraHandler.post(fetchAndDecodeRunnable);
             } catch (final Exception x) {
                 log.info("problem opening camera", x);
-                viewModel.showProblemWarnDialog.postCall();
+                viewModel.showProblemWarnDialog.postValue(Event.simple());
             }
         }
 

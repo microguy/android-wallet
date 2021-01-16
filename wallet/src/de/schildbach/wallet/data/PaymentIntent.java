@@ -17,11 +17,9 @@
 
 package de.schildbach.wallet.data;
 
-import static android.support.v4.util.Preconditions.checkArgument;
+import static androidx.core.util.Preconditions.checkArgument;
 
 import java.util.Arrays;
-
-import javax.annotation.Nullable;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
@@ -45,6 +43,7 @@ import de.schildbach.wallet.util.GenericUtils;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import androidx.annotation.Nullable;
 
 /**
  * @author Andreas Schildbach

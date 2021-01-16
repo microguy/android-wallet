@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2015 the original author or authors.
+ * Copyright the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,38 @@
 
 package de.schildbach.wallet.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.schildbach.wallet.R;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
  */
 public final class RequestCoinsActivity extends AbstractWalletActivity {
+    private RequestCoinsActivityViewModel viewModel;
+
+    private static final Logger log = LoggerFactory.getLogger(RequestCoinsActivity.class);
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        log.info("Referrer: {}", ActivityCompat.getReferrer(this));
         setContentView(R.layout.request_coins_content);
+
+        viewModel = ViewModelProviders.of(this).get(RequestCoinsActivityViewModel.class);
+        viewModel.showHelpDialog.observe(this, new Event.Observer<Integer>() {
+            @Override
+            public void onEvent(final Integer messageResId) {
+                HelpDialogFragment.page(getSupportFragmentManager(), messageResId);
+            }
+        });
     }
 
     @Override
@@ -50,7 +67,7 @@ public final class RequestCoinsActivity extends AbstractWalletActivity {
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
         case R.id.request_coins_options_help:
-            HelpDialogFragment.page(getSupportFragmentManager(), R.string.help_request_coins);
+            viewModel.showHelpDialog.setValue(new Event<>(R.string.help_request_coins));
             return true;
         }
 

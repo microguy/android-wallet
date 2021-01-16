@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.wallet.Wallet;
@@ -35,13 +36,15 @@ import de.schildbach.wallet.data.AddressBookEntry;
 import de.schildbach.wallet.data.WalletLiveData;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ClipboardManager.OnPrimaryClipChangedListener;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 /**
  * @author Andreas Schildbach
@@ -52,6 +55,8 @@ public class SendingAddressesViewModel extends AndroidViewModel {
     public LiveData<List<AddressBookEntry>> addressBook;
     public final AddressesToExcludeLiveData addressesToExclude;
     public final ClipLiveData clip;
+    public final MutableLiveData<Event<Bitmap>> showBitmapDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<Address>> showEditAddressBookEntryDialog = new MutableLiveData<>();
 
     public SendingAddressesViewModel(final Application application) {
         super(application);

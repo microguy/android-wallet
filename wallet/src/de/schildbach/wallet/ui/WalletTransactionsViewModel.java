@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
@@ -48,12 +49,13 @@ import de.schildbach.wallet.data.ConfigFormatLiveData;
 import de.schildbach.wallet.data.WalletLiveData;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 /**
  * @author Andreas Schildbach
@@ -71,8 +73,11 @@ public class WalletTransactionsViewModel extends AndroidViewModel {
     private final ConfigFormatLiveData configFormat;
     public final MutableLiveData<Direction> direction = new MutableLiveData<>();
     private final MutableLiveData<Sha256Hash> selectedTransaction = new MutableLiveData<>();
-    private final MutableLiveData<TransactionsAdapter.WarningType> warning = new MutableLiveData<>();
+    public final MutableLiveData<TransactionsAdapter.WarningType> warning = new MutableLiveData<>();
     public final MediatorLiveData<List<TransactionsAdapter.ListItem>> list = new MediatorLiveData<>();
+    public final MutableLiveData<Event<Bitmap>> showBitmapDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<Address>> showEditAddressBookEntryDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<String>> showReportIssueDialog = new MutableLiveData<>();
 
     public WalletTransactionsViewModel(final Application application) {
         super(application);

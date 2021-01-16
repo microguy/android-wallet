@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2015 the original author or authors.
+ * Copyright the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 
 package de.schildbach.wallet.ui;
 
-import javax.annotation.Nullable;
-
 import org.bitcoinj.core.Address;
 import org.bitcoinj.wallet.Wallet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.R;
@@ -34,11 +34,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * @author Andreas Schildbach
@@ -49,15 +50,11 @@ public final class EditAddressBookEntryFragment extends DialogFragment {
     private static final String KEY_ADDRESS = "address";
     private static final String KEY_SUGGESTED_ADDRESS_LABEL = "suggested_address_label";
 
-    public static void edit(final FragmentManager fm, final String address) {
-        edit(fm, Address.fromBase58(Constants.NETWORK_PARAMETERS, address), null);
-    }
-
     public static void edit(final FragmentManager fm, final Address address) {
         edit(fm, address, null);
     }
 
-    public static void edit(final FragmentManager fm, final Address address,
+    private static void edit(final FragmentManager fm, final Address address,
             @Nullable final String suggestedAddressLabel) {
         final DialogFragment newFragment = EditAddressBookEntryFragment.instance(address, suggestedAddressLabel);
         newFragment.show(fm, FRAGMENT_TAG);
@@ -79,6 +76,8 @@ public final class EditAddressBookEntryFragment extends DialogFragment {
     private AddressBookDao addressBookDao;
     private Wallet wallet;
 
+    private static final Logger log = LoggerFactory.getLogger(EditAddressBookEntryFragment.class);
+
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
@@ -86,6 +85,12 @@ public final class EditAddressBookEntryFragment extends DialogFragment {
         final WalletApplication application = activity.getWalletApplication();
         this.addressBookDao = AppDatabase.getDatabase(context).addressBookDao();
         this.wallet = application.getWallet();
+    }
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        log.info("opening dialog {}", getClass().getName());
     }
 
     @Override

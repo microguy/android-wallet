@@ -17,11 +17,9 @@
 
 package de.schildbach.wallet.util;
 
-import static android.support.v4.util.Preconditions.checkArgument;
+import static androidx.core.util.Preconditions.checkArgument;
 
 import java.util.regex.Matcher;
-
-import javax.annotation.Nullable;
 
 import org.bitcoinj.core.Monetary;
 import org.bitcoinj.utils.MonetaryFormat;
@@ -33,6 +31,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import androidx.annotation.Nullable;
 
 /**
  * @author Andreas Schildbach

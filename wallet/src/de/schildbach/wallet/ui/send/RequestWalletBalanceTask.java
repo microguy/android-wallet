@@ -47,6 +47,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.UTXO;
 import org.bitcoinj.script.Script;
@@ -119,7 +120,7 @@ public final class RequestWalletBalanceTask {
         }
     }
 
-    public void requestWalletBalance(final AssetManager assets, final Address address) {
+    public void requestWalletBalance(final AssetManager assets, final ECKey key) {
         backgroundHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -129,6 +130,8 @@ public final class RequestWalletBalanceTask {
                     final List<ElectrumServer> servers = loadElectrumServers(
                             assets.open(Constants.Files.ELECTRUM_SERVERS_FILENAME));
                     final ElectrumServer server = servers.get(new Random().nextInt(servers.size()));
+                    final Address address = key.toAddress(Constants.NETWORK_PARAMETERS);
+                    final Script outputScript = ScriptBuilder.createOutputScript(address);
                     log.info("trying to request wallet balance from {}: {}", server.socketAddress, address);
                     final Socket socket;
                     if (server.type == ElectrumServer.Type.TLS) {
@@ -161,8 +164,9 @@ public final class RequestWalletBalanceTask {
                     source.timeout().timeout(5000, TimeUnit.MILLISECONDS);
                     final Moshi moshi = new Moshi.Builder().build();
                     final JsonAdapter<JsonRpcRequest> requestAdapter = moshi.adapter(JsonRpcRequest.class);
-                    final JsonRpcRequest request = new JsonRpcRequest("blockchain.address.listunspent",
-                            new String[] { address.toBase58() });
+                    final JsonRpcRequest request = new JsonRpcRequest("blockchain.scripthash.listunspent",
+                            new String[] { Constants.HEX
+                                    .encode(Sha256Hash.of(outputScript.getProgram()).getReversedBytes()) });
                     requestAdapter.toJson(sink, request);
                     sink.writeUtf8("\n").flush();
                     final JsonAdapter<JsonRpcResponse> responseAdapter = moshi.adapter(JsonRpcResponse.class);
@@ -175,9 +179,8 @@ public final class RequestWalletBalanceTask {
                             final Sha256Hash utxoHash = Sha256Hash.wrap(responseUtxo.tx_hash);
                             final int utxoIndex = responseUtxo.tx_pos;
                             final Coin utxoValue = Coin.valueOf(responseUtxo.value);
-                            final Script script = ScriptBuilder.createOutputScript(address);
                             final UTXO utxo = new UTXO(utxoHash, utxoIndex, utxoValue, responseUtxo.height, false,
-                                    script);
+                                    outputScript);
                             utxos.add(utxo);
                         }
 

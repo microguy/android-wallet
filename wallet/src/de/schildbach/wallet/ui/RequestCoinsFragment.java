@@ -17,8 +17,6 @@
 
 package de.schildbach.wallet.ui;
 
-import javax.annotation.Nullable;
-
 import org.bitcoinj.core.Address;
 import org.bitcoinj.protocols.payments.PaymentProtocol;
 import org.slf4j.Logger;
@@ -36,8 +34,6 @@ import de.schildbach.wallet.util.Nfc;
 import de.schildbach.wallet.util.Toast;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -54,9 +50,6 @@ import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.ShareCompat;
-import android.support.v7.widget.CardView;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,6 +63,12 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ShareCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
@@ -129,7 +128,7 @@ public final class RequestCoinsFragment extends Fragment {
                 qrCardView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(final View v) {
-                        BitmapFragment.show(getFragmentManager(), viewModel.qrCode.getValue());
+                        viewModel.showBitmapDialog.setValue(new Event<>(viewModel.qrCode.getValue()));
                     }
                 });
             }
@@ -161,6 +160,12 @@ public final class RequestCoinsFragment extends Fragment {
                 }
             });
         }
+        viewModel.showBitmapDialog.observe(this, new Event.Observer<Bitmap>() {
+            @Override
+            public void onEvent(final Bitmap bitmap) {
+                BitmapFragment.show(getFragmentManager(), bitmap);
+            }
+        });
 
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);

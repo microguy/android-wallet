@@ -45,13 +45,12 @@ import de.schildbach.wallet.util.WalletUtils;
 import de.schildbach.wallet.util.WholeStringBuilder;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,6 +64,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
@@ -123,6 +124,18 @@ public final class SendingAddressesFragment extends FancyListFragment {
                 activity.invalidateOptionsMenu();
             }
         });
+        viewModel.showBitmapDialog.observe(this, new Event.Observer<Bitmap>() {
+            @Override
+            public void onEvent(final Bitmap bitmap) {
+                BitmapFragment.show(getFragmentManager(), bitmap);
+            }
+        });
+        viewModel.showEditAddressBookEntryDialog.observe(this, new Event.Observer<Address>() {
+            @Override
+            public void onEvent(final Address address) {
+                EditAddressBookEntryFragment.edit(getFragmentManager(), address);
+            }
+        });
 
         adapter = new ArrayAdapter<AddressBookEntry>(activity, 0) {
             @Override
@@ -156,7 +169,7 @@ public final class SendingAddressesFragment extends FancyListFragment {
                                 final Wallet wallet = viewModel.wallet.getValue();
                                 final Address address = paymentIntent.getAddress();
                                 if (!wallet.isPubKeyHashMine(address.getHash160()))
-                                    EditAddressBookEntryFragment.edit(getFragmentManager(), address);
+                                    viewModel.showEditAddressBookEntryDialog.setValue(new Event<>(address));
                                 else
                                     dialog(activity, null, R.string.address_book_options_scan_title,
                                             R.string.address_book_options_scan_own_address);
@@ -224,7 +237,7 @@ public final class SendingAddressesFragment extends FancyListFragment {
             dialog.singleDismissButton(null);
             dialog.show();
         } else if (!wallet.isPubKeyHashMine(address.getHash160())) {
-            EditAddressBookEntryFragment.edit(getFragmentManager(), address);
+            viewModel.showEditAddressBookEntryDialog.setValue(new Event<>(address));
         } else {
             final DialogBuilder dialog = new DialogBuilder(activity);
             dialog.setTitle(R.string.address_book_options_paste_from_clipboard_title);
@@ -263,7 +276,8 @@ public final class SendingAddressesFragment extends FancyListFragment {
                     return true;
 
                 case R.id.sending_addresses_context_edit:
-                    EditAddressBookEntryFragment.edit(getFragmentManager(), getAddress(position));
+                    final Address address = Address.fromBase58(Constants.NETWORK_PARAMETERS, getAddress(position));
+                    viewModel.showEditAddressBookEntryDialog.setValue(new Event<>(address));
 
                     mode.finish();
                     return true;
@@ -275,7 +289,9 @@ public final class SendingAddressesFragment extends FancyListFragment {
                     return true;
 
                 case R.id.sending_addresses_context_show_qr:
-                    handleShowQr(getAddress(position), getLabel(position));
+                    final String uri = BitcoinURI.convertToBitcoinURI(Constants.NETWORK_PARAMETERS,
+                            getAddress(position), null, getLabel(position), null);
+                    viewModel.showBitmapDialog.setValue(new Event<>(Qr.bitmap(uri)));
 
                     mode.finish();
                     return true;
@@ -310,11 +326,6 @@ public final class SendingAddressesFragment extends FancyListFragment {
 
     private void handleRemove(final String address) {
         addressBookDao.delete(address);
-    }
-
-    private void handleShowQr(final String address, final String label) {
-        final String uri = BitcoinURI.convertToBitcoinURI(Constants.NETWORK_PARAMETERS, address, null, label, null);
-        BitmapFragment.show(getFragmentManager(), Qr.bitmap(uri));
     }
 
     private void handleCopyToClipboard(final String address) {

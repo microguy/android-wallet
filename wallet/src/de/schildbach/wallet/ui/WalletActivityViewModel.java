@@ -25,25 +25,31 @@ import de.schildbach.wallet.data.AbstractWalletLiveData;
 import de.schildbach.wallet.util.OnFirstPreDraw;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 
 /**
  * @author Andreas Schildbach
  */
-public class WalletViewModel extends AndroidViewModel implements OnFirstPreDraw.Callback {
+public class WalletActivityViewModel extends AndroidViewModel implements OnFirstPreDraw.Callback {
     public static enum EnterAnimationState {
         WAITING, ANIMATING, FINISHED
     }
 
     private final WalletApplication application;
     public final WalletEncryptedLiveData walletEncrypted;
+    public final MutableLiveData<Event<Integer>> showHelpDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<Void>> showBackupWalletDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<Void>> showRestoreWalletDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<Void>> showEncryptKeysDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<Void>> showReportIssueDialog = new MutableLiveData<>();
+    public final MutableLiveData<Event<Void>> showReportCrashDialog = new MutableLiveData<>();
     public final MutableLiveData<EnterAnimationState> enterAnimation = new MutableLiveData<>();
     private boolean doAnimation, globalLayoutFinished, balanceLoadingFinished, addressLoadingFinished,
             transactionsLoadingFinished;
 
-    public WalletViewModel(final Application application) {
+    public WalletActivityViewModel(final Application application) {
         super(application);
         this.application = (WalletApplication) application;
         this.walletEncrypted = new WalletEncryptedLiveData(this.application);

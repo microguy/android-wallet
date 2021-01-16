@@ -27,12 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.R;
 import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.util.CrashReporter;
+import de.schildbach.wallet.util.Installer;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -48,9 +48,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.text.format.DateUtils;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
@@ -105,9 +105,10 @@ public class AlertDialogsFragment extends Fragment {
                         + (versionNameSplit >= 0 ? packageInfo.versionName.substring(versionNameSplit) : ""))
                 .newBuilder();
         url.addEncodedQueryParameter("package", packageInfo.packageName);
-        final String installerPackageName = packageManager.getInstallerPackageName(packageInfo.packageName);
+        final String installerPackageName = Installer.installerPackageName(application);
         if (installerPackageName != null)
             url.addEncodedQueryParameter("installer", installerPackageName);
+        url.addQueryParameter("sdk", Integer.toString(Build.VERSION.SDK_INT));
         url.addQueryParameter("current", Integer.toString(packageInfo.versionCode));
         versionUrl = url.build();
     }
@@ -291,25 +292,28 @@ public class AlertDialogsFragment extends Fragment {
     }
 
     private Dialog createVersionAlertDialog() {
+        Installer installer = Installer.from(application);
+        if (installer == null)
+            installer = Installer.F_DROID;
         final Intent marketIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(String.format(Constants.MARKET_APP_URL, application.packageInfo().packageName)));
+                Uri.parse(installer.appStorePageFor(application).toString()));
         final Intent binaryIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.BINARY_URL));
 
         final DialogBuilder dialog = DialogBuilder.warn(activity, R.string.wallet_version_dialog_title);
-        final StringBuilder message = new StringBuilder(getString(R.string.wallet_version_dialog_msg));
+        final StringBuilder message = new StringBuilder(
+                getString(R.string.wallet_version_dialog_msg, installer.displayName));
         if (Build.VERSION.SDK_INT < Constants.SDK_DEPRECATED_BELOW)
             message.append("\n\n").append(getString(R.string.wallet_version_dialog_msg_deprecated));
         dialog.setMessage(message);
 
         if (packageManager.resolveActivity(marketIntent, 0) != null) {
-            dialog.setPositiveButton(R.string.wallet_version_dialog_button_market,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int id) {
-                            startActivity(marketIntent);
-                            activity.finish();
-                        }
-                    });
+            dialog.setPositiveButton(installer.displayName, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, final int id) {
+                    startActivity(marketIntent);
+                    activity.finish();
+                }
+            });
         }
 
         if (packageManager.resolveActivity(binaryIntent, 0) != null) {

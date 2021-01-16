@@ -17,8 +17,6 @@
 
 package de.schildbach.wallet.ui;
 
-import javax.annotation.Nullable;
-
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.protocols.payments.PaymentProtocol;
@@ -34,14 +32,15 @@ import de.schildbach.wallet.util.Bluetooth;
 import de.schildbach.wallet.util.Qr;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 /**
  * @author Andreas Schildbach
@@ -56,6 +55,7 @@ public class RequestCoinsViewModel extends AndroidViewModel {
     public final MediatorLiveData<Bitmap> qrCode = new MediatorLiveData<>();
     public final MediatorLiveData<byte[]> paymentRequest = new MediatorLiveData<>();
     public final MediatorLiveData<Uri> bitcoinUri = new MediatorLiveData<>();
+    public final MutableLiveData<Event<Bitmap>> showBitmapDialog = new MutableLiveData<>();
 
     @Nullable
     public Intent bluetoothServiceIntent = null;

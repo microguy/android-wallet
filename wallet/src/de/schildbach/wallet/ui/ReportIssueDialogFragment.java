@@ -30,6 +30,8 @@ import java.util.TimeZone;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.wallet.Wallet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -39,14 +41,13 @@ import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.util.Bluetooth;
 import de.schildbach.wallet.util.CrashReporter;
+import de.schildbach.wallet.util.Installer;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.admin.DevicePolicyManager;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -55,9 +56,11 @@ import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.widget.Button;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 /**
  * @author Andreas Schildbach
@@ -90,6 +93,8 @@ public class ReportIssueDialogFragment extends DialogFragment {
 
     private ReportIssueViewModel viewModel;
 
+    private static final Logger log = LoggerFactory.getLogger(ReportIssueDialogFragment.class);
+
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
@@ -100,6 +105,8 @@ public class ReportIssueDialogFragment extends DialogFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        log.info("opening dialog {}", getClass().getName());
+
         viewModel = ViewModelProviders.of(this).get(ReportIssueViewModel.class);
     }
 
@@ -117,14 +124,16 @@ public class ReportIssueDialogFragment extends DialogFragment {
                 final StringBuilder builder = new StringBuilder(subject).append(": ");
                 final PackageInfo pi = application.packageInfo();
                 builder.append(WalletApplication.versionLine(pi));
-                final String installerPackageName = application.getPackageManager()
-                        .getInstallerPackageName(pi.packageName);
-                if (installerPackageName != null)
-                    builder.append(", installer ").append(installerPackageName);
+                final String installer = Installer.installerPackageName(application);
+                if (installer != null)
+                    builder.append(", installer ").append(installer);
                 builder.append(", android ").append(Build.VERSION.RELEASE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                     builder.append(" (").append(Build.VERSION.SECURITY_PATCH).append(")");
-                builder.append(", ").append(Build.BRAND).append(' ').append(Build.MODEL);
+                builder.append(", ").append(Build.MANUFACTURER);
+                if (!Build.BRAND.equalsIgnoreCase(Build.MANUFACTURER))
+                    builder.append(' ').append(Build.BRAND);
+                builder.append(' ').append(Build.MODEL);
                 return builder.toString();
             }
 
@@ -193,7 +202,12 @@ public class ReportIssueDialogFragment extends DialogFragment {
 
         report.append("Version: " + pi.versionName + " (" + pi.versionCode + ")\n");
         report.append("Package: " + pi.packageName + "\n");
-        report.append("Installer: " + application.getPackageManager().getInstallerPackageName(pi.packageName) + "\n");
+        final String installerPackageName = Installer.installerPackageName(application);
+        final Installer installer = Installer.from(installerPackageName);
+        if (installer != null)
+            report.append("Installer: " + installer.displayName + " (" + installerPackageName + ")\n");
+        else
+            report.append("Installer: unknown\n");
         report.append("Test/Prod: " + (Constants.TEST ? "test" : "prod") + "\n");
         report.append("Timezone: " + TimeZone.getDefault().getID() + "\n");
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -269,6 +283,7 @@ public class ReportIssueDialogFragment extends DialogFragment {
         final DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context
                 .getSystemService(Context.DEVICE_POLICY_SERVICE);
 
+        report.append("Manufacturer: " + Build.MANUFACTURER + "\n");
         report.append("Device Model: " + Build.MODEL + "\n");
         report.append("Android Version: " + Build.VERSION.RELEASE + "\n");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -280,19 +295,13 @@ public class ReportIssueDialogFragment extends DialogFragment {
         report.append("Board: " + Build.BOARD + "\n");
         report.append("Brand: " + Build.BRAND + "\n");
         report.append("Device: " + Build.DEVICE + "\n");
-        report.append("Display: " + Build.DISPLAY + "\n");
-        report.append("Finger Print: " + Build.FINGERPRINT + "\n");
-        report.append("Host: " + Build.HOST + "\n");
-        report.append("ID: " + Build.ID + "\n");
         report.append("Product: " + Build.PRODUCT + "\n");
-        report.append("Tags: " + Build.TAGS + "\n");
-        report.append("Time: " + Build.TIME + "\n");
-        report.append("Type: " + Build.TYPE + "\n");
-        report.append("User: " + Build.USER + "\n");
         report.append("Configuration: " + config + "\n");
-        report.append("Screen Layout: size "
-                + (config.screenLayout & android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK) + " long "
-                + (config.screenLayout & android.content.res.Configuration.SCREENLAYOUT_LONG_MASK) + "\n");
+        report.append("Screen Layout:" //
+                + " size " + (config.screenLayout & android.content.res.Configuration.SCREENLAYOUT_SIZE_MASK) //
+                + " long " + (config.screenLayout & android.content.res.Configuration.SCREENLAYOUT_LONG_MASK) //
+                + " layoutdir " + (config.screenLayout & android.content.res.Configuration.SCREENLAYOUT_LAYOUTDIR_MASK) //
+                + " round " + (config.screenLayout & android.content.res.Configuration.SCREENLAYOUT_ROUND_MASK) + "\n");
         report.append("Display Metrics: " + res.getDisplayMetrics() + "\n");
         report.append("Memory Class: " + activityManager.getMemoryClass() + "/" + activityManager.getLargeMemoryClass()
                 + (activityManager.isLowRamDevice() ? " (low RAM device)" : "") + "\n");
