@@ -2,13 +2,13 @@ package de.schildbach.wallet.ui.send;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.format.DateUtils;
 
 import com.google.common.base.Charsets;
 
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
@@ -55,7 +55,7 @@ public class RequestWalletBalanceTaskChainz {
         this.userAgent = userAgent;
     }
 
-    public void requestWalletBalance(final Address... addresses) {
+    public void requestWalletBalance(final ECKey... keys) {
         backgroundHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -63,14 +63,7 @@ public class RequestWalletBalanceTaskChainz {
 
                 final StringBuilder url = new StringBuilder(Constants.BITEASY_API_URL);
                 url.append("&key=d47da926b82e");    //Cryptoid API key
-                url.append("&active=").append(addresses[0].toString());
-
-				/*url.append("outputs");
-				url.append("?per_page=MAX");
-				url.append("&operator=AND");
-				url.append("&spent_state=UNSPENT");*/
-                for (final Address address : addresses)
-                    url.append("&address[]=").append(address.toBase58());
+                url.append("&active=").append(keys[0].toAddress(Constants.NETWORK_PARAMETERS).toBase58());
 
                 log.debug("trying to request wallet balance from {}", url);
 
@@ -122,10 +115,10 @@ public class RequestWalletBalanceTaskChainz {
 
                             final Sha256Hash utxoHash = Sha256Hash.wrap(jsonOutput.getString("tx_hash"));
                             final int utxoIndex = jsonOutput.getInt("tx_ouput_n");
-                            final byte[] utxoScriptBytes = ScriptBuilder.createOutputScript(addresses[0]).getProgram();
+                            final byte[] utxoScriptBytes = ScriptBuilder.createOutputScript(keys[0].toAddress(Constants.NETWORK_PARAMETERS)).getProgram();
                             final Coin utxoValue = Coin.valueOf(Long.parseLong(jsonOutput.getString("value")));
 
-                            UTXO utxo = new UTXO(utxoHash, utxoIndex, utxoValue, 0, false, ScriptBuilder.createOutputScript(addresses[0]), addresses[0].toString());
+                            UTXO utxo = new UTXO(utxoHash, utxoIndex, utxoValue, 0, false, ScriptBuilder.createOutputScript(keys[0].toAddress(Constants.NETWORK_PARAMETERS)), keys[0].toAddress(Constants.NETWORK_PARAMETERS).toString());
                             utxos.add(utxo);
                         }
 
