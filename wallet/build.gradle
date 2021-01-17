@@ -79,8 +79,8 @@ android {
         }
     }
     defaultConfig {
-        versionCode 63302
-        versionName "6.33.2"
+        versionCode 64102
+        versionName "6.41.0"
         vectorDrawables.useSupportLibrary = true
     }
     flavorDimensions("version")
