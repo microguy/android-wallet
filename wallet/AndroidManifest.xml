@@ -8,7 +8,7 @@
 
     <uses-sdk
         android:minSdkVersion="19"
-        android:targetSdkVersion="28"
+        android:targetSdkVersion="29"
         tools:ignore="OldTargetApi" />
 
     <!-- normal permissions -->
@@ -188,7 +188,7 @@
             android:authorities="${applicationId}.exchange_rates"
             android:exported="false" />
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.file_attachment"
             android:exported="false"
             android:grantUriPermissions="true" >
