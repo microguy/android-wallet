@@ -56,6 +56,8 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.format.DateUtils;
 import androidx.annotation.Nullable;
+
+import de.schildbach.wallet.util.Io;
 import okhttp3.Call;
 import okhttp3.ConnectionSpec;
 import okhttp3.HttpUrl;
