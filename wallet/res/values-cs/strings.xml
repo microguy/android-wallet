@@ -227,11 +227,11 @@
   <string name="preferences_category_labs">Laboratoř</string>
   <string name="preferences_precision_title">Denominace a přesnost</string>
   <string name="preferences_precision_summary">Jednotka pro zobrazování částek. Neovlivňuje výpočty.</string>
-  <string name="preferences_precision_labels_8">BTC, 8 desetinných míst</string>
-  <string name="preferences_precision_labels_6">BTC, 6 desetinných míst</string>
-  <string name="preferences_precision_labels_4">BTC, 4 desetinná místa</string>
-  <string name="preferences_precision_labels_2_3">mBTC, 2 desetinná místa</string>
-  <string name="preferences_precision_labels_0_6">µBTC, bez desetinných míst</string>
+  <string name="preferences_precision_labels_8">GLC, 8 desetinných míst</string>
+  <string name="preferences_precision_labels_6">GLC, 6 desetinných míst</string>
+  <string name="preferences_precision_labels_4">GLC, 4 desetinná místa</string>
+  <string name="preferences_precision_labels_2_3">mGLC, 2 desetinná místa</string>
+  <string name="preferences_precision_labels_0_6">µGLC, bez desetinných míst</string>
   <string name="preferences_own_name_title">Vlastní jméno</string>
   <string name="preferences_own_name_summary">Vaše jméno, přidávané k platebním požadavkům. Udržujte krátké.</string>
   <string name="preferences_send_coins_autoclose_title">Automaticky zavírat dialog odeslání platby</string>
