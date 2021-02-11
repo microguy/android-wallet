@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import android.text.format.DateUtils;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
 
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
@@ -33,7 +34,6 @@ import java.util.Set;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.R;
-import de.schildbach.wallet.util.Io;
 
 /**
  * Created by Andreas Schildbach on 8/9/18.
@@ -89,22 +89,12 @@ public class RequestWalletBalanceTaskChainz {
                     if (responseCode == HttpURLConnection.HTTP_OK) {
                         reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024), Charsets.UTF_8);
                         final StringBuilder content = new StringBuilder();
-                        Io.copy(reader, content);
+                        CharStreams.copy(reader, content);
 
                         final JSONObject json = new JSONObject(content.toString());
 
                         final JSONObject jsonData = json;
-						/*final int status = json.getInt("status");
-						if (status != 200)
-							throw new IOException("api status " + status + " when fetching unspent outputs");
 
-						final JSONObject jsonData = json.getJSONObject("data");
-
-						final JSONObject jsonPagination = jsonData.getJSONObject("pagination");
-
-						if (!"false".equals(jsonPagination.getString("next_page")))
-							throw new IOException("result set too big");
-*/
                         final JSONArray jsonOutputs = jsonData.getJSONArray("unspent_outputs");
 
                         final Map<Sha256Hash, Transaction> transactions = new HashMap<Sha256Hash, Transaction>(jsonOutputs.length());
@@ -115,7 +105,6 @@ public class RequestWalletBalanceTaskChainz {
 
                             final Sha256Hash utxoHash = Sha256Hash.wrap(jsonOutput.getString("tx_hash"));
                             final int utxoIndex = jsonOutput.getInt("tx_ouput_n");
-                            final byte[] utxoScriptBytes = ScriptBuilder.createOutputScript(keys[0].toAddress(Constants.NETWORK_PARAMETERS)).getProgram();
                             final Coin utxoValue = Coin.valueOf(Long.parseLong(jsonOutput.getString("value")));
 
                             UTXO utxo = new UTXO(utxoHash, utxoIndex, utxoValue, 0, false, ScriptBuilder.createOutputScript(keys[0].toAddress(Constants.NETWORK_PARAMETERS)), keys[0].toAddress(Constants.NETWORK_PARAMETERS).toString());
