@@ -57,11 +57,8 @@ import android.provider.BaseColumns;
 import android.text.format.DateUtils;
 import androidx.annotation.Nullable;
 
-import de.schildbach.wallet.util.Io;
 import okhttp3.Call;
-import okhttp3.ConnectionSpec;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -132,9 +129,7 @@ public class ExchangeRatesProvider extends ContentProvider {
         final boolean offline = uri.getQueryParameter(QUERY_PARAM_OFFLINE) != null;
 
         if (!offline && (lastUpdated == 0 || now - lastUpdated > UPDATE_FREQ_MS)) {
-            Map<String, ExchangeRate> newExchangeRates = null;
-            if (newExchangeRates == null)
-                newExchangeRates = requestExchangeRatesBackup();
+            Map<String, ExchangeRate> newExchangeRates = requestExchangeRates();
 
             if (newExchangeRates != null) {
                 exchangeRates = newExchangeRates;
@@ -244,209 +239,6 @@ public class ExchangeRatesProvider extends ContentProvider {
         final Stopwatch watch = Stopwatch.createStarted();
 
         final Request.Builder request = new Request.Builder();
-        request.url(BITCOINAVERAGE_URL);
-        request.header("User-Agent", userAgent);
-
-        Double btcRate = 0.0;
-        Object result = getCoinValueBTC_bittrex();
-
-        if (result == null) {
-            result = getCoinValueBTC_cryptopia();
-            if (result == null)
-                return null;
-        }
-        btcRate = (Double)result;
-
-        final Call call = Constants.HTTP_CLIENT.newCall(request.build());
-        try {
-            final Response response = call.execute();
-            if (response.isSuccessful()) {
-                final String content = response.body().string();
-                final JSONObject head = new JSONObject(content);
-                final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
-
-                for (final Iterator<String> i = head.keys(); i.hasNext();) {
-                    final String currencyCode = i.next();
-                    if (currencyCode.startsWith("BTC")) {
-                        final String fiatCurrencyCode = currencyCode.substring(3);
-                        if (!fiatCurrencyCode.equals(MonetaryFormat.CODE_BTC)
-                                && !fiatCurrencyCode.equals(MonetaryFormat.CODE_MBTC)
-                                && !fiatCurrencyCode.equals(MonetaryFormat.CODE_UBTC)) {
-                            final JSONObject exchangeRate = head.getJSONObject(currencyCode);
-                            try {
-                                Double rateForBTC = Double.parseDouble(exchangeRate.getString("last"));
-                                String rateStr = String.format("%.8f", rateForBTC * btcRate).replace(",", ".");
-                                final Fiat rate = parseFiatInexact(fiatCurrencyCode, rateStr);
-                                if (rate.signum() > 0)
-                                    rates.put(fiatCurrencyCode, new ExchangeRate(
-                                            new org.bitcoinj.utils.ExchangeRate(rate), BITCOINAVERAGE_SOURCE));
-                            } catch (final IllegalArgumentException x) {
-                                log.warn("problem fetching {} exchange rate from {}: {}", currencyCode,
-                                        BITCOINAVERAGE_URL, x.getMessage());
-                            }
-                        }
-                    }
-                }
-
-                watch.stop();
-                log.info("fetched exchange rates from {}, {} chars, took {}", BITCOINAVERAGE_URL, content.length(),
-                        watch);
-
-                return rates;
-            } else {
-                log.warn("http status {} when fetching exchange rates from {}", response.code(), BITCOINAVERAGE_URL);
-            }
-        } catch (final Exception x) {
-            log.warn("problem fetching exchange rates from " + BITCOINAVERAGE_URL, x);
-        }
-
-        return null;
-    }
-
-    // backport from bitcoinj 0.15
-    private static Fiat parseFiatInexact(final String currencyCode, final String str) {
-        final long val = new BigDecimal(str).movePointRight(Fiat.SMALLEST_UNIT_EXPONENT).longValue();
-        return Fiat.valueOf(currencyCode, val);
-    }
-
-    private static Object getCoinValueBTC_cryptopia() {
-        //final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
-        // Keep the LTC rate around for a bit
-        Double btcRate = Double.valueOf(0.0);
-        String currency = "BTC";
-        String exchange = "https://www.cryptopia.co.nz/api/GetMarket/2623";
-
-
-        HttpURLConnection connection = null;
-
-
-        try {
-            // final String currencyCode = currencies[i];
-            final URL url = new URL(exchange);
-
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setInstanceFollowRedirects(false);
-            connection.setConnectTimeout(30 * (int)DateUtils.SECOND_IN_MILLIS);
-            connection.setReadTimeout(30 * (int)DateUtils.SECOND_IN_MILLIS);
-            //connection.addRequestProperty("User-Agent", userAgent);
-            connection.connect();
-
-            final StringBuilder content = new StringBuilder();
-
-            Reader reader = null;
-            try {
-                reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024));
-                //Io.copy(reader, content);
-                final JSONObject head = new JSONObject(content.toString());
-
-				/*{
-					"Success":true,
-						"Message":null,
-						"Data":{
-							"TradePairId":100,
-							"Label":"LTC/BTC",
-							"AskPrice":0.00006000,
-							"BidPrice":0.02000000,
-							"Low":0.00006000,
-							"High":0.00006000,
-							"Volume":1000.05639978,
-							"LastPrice":0.00006000,
-							"LastVolume":499.99640000,
-							"BuyVolume":67003436.37658233,
-							"SellVolume":67003436.37658233,
-							"Change":-400.00000000
-						}
-				}*/
-                String result = head.getString("Success");
-                if (result.equals("true")) {
-                    JSONObject dataObject = head.getJSONObject("Data");
-
-                    Double averageTrade = Double.valueOf(0.0);
-                    if (dataObject.get("Label").equals("GLD/BTC"))
-                        averageTrade = (Double)dataObject.getDouble("LastPrice");
-
-
-                    if (currency.equalsIgnoreCase("BTC"))
-                        btcRate = averageTrade;
-                }
-                log.info("fetched exchange rates from {}", url);
-
-                return btcRate;
-            } finally {
-                if (reader != null)
-                    reader.close();
-            }
-
-        } catch (final IOException x) {
-            x.printStackTrace();
-        } catch (final JSONException x) {
-            x.printStackTrace();
-        }
-
-        return null;
-    }
-
-    private static Object getCoinValueBTC_bittrex() {
-        //final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
-        // Keep the LTC rate around for a bit
-        Double btcRate = Double.valueOf(0.0);
-        String currency = "BTC";
-        String url = "https://bittrex.com/api/v1.1/public/getticker?market=btc-glc";
-
-
-        try {
-            // final String currencyCode = currencies[i];
-            final URL URL_bter = new URL(url);
-            final HttpURLConnection connection = (HttpURLConnection) URL_bter.openConnection();
-            connection.setConnectTimeout(30 * (int)DateUtils.SECOND_IN_MILLIS);
-            connection.setReadTimeout(30 * (int)DateUtils.SECOND_IN_MILLIS);
-            connection.connect();
-
-            final StringBuilder content = new StringBuilder();
-
-            Reader reader = null;
-            try {
-                reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024));
-                Io.copy(reader, content);
-                final JSONObject head = new JSONObject(content.toString());
-
-				/*
-				{"success":true,"message":"","result":{"Bid":0.00313794,"Ask":0.00321785,"Last":0.00315893}}
-				}*/
-                String result = head.getString("success");
-                if (result.equals("true")) {
-                    JSONObject dataObject = head.getJSONObject("result");
-
-                    double averageTrade = dataObject.getDouble("Last");
-
-
-                    if (currency.equalsIgnoreCase("BTC"))
-                        btcRate = Double.valueOf(averageTrade);
-                }
-                log.info("fetched exchange rates from {}", url);
-                return btcRate;
-            } finally {
-                if (reader != null)
-                    reader.close();
-            }
-
-        } catch (final IOException x) {
-            x.printStackTrace();
-        } catch (final JSONException x) {
-            x.printStackTrace();
-        }
-
-        return null;
-    }
-
-    private static String COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/goldcoin?localization=false&community_data=false&developer_data=false&sparkline=false";
-    private static final String COINGECKO_SOURCE = "CoinGecko.com";
-
-
-    private Map<String, ExchangeRate> requestExchangeRatesBackup() {
-        final Stopwatch watch = Stopwatch.createStarted();
-
-        final Request.Builder request = new Request.Builder();
         request.url(COINGECKO_URL);
         request.header("User-Agent", userAgent);
 
@@ -497,4 +289,14 @@ public class ExchangeRatesProvider extends ContentProvider {
 
         return null;
     }
+
+    // backport from bitcoinj 0.15
+    private static Fiat parseFiatInexact(final String currencyCode, final String str) {
+        final long val = new BigDecimal(str).movePointRight(Fiat.SMALLEST_UNIT_EXPONENT).longValue();
+        return Fiat.valueOf(currencyCode, val);
+    }
+
+    private static String COINGECKO_URL = "https://api.coingecko.com/api/v3/coins/goldcoin?localization=false&community_data=false&developer_data=false&sparkline=false";
+    private static final String COINGECKO_SOURCE = "CoinGecko.com";
+
 }
