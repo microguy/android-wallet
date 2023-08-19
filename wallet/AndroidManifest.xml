@@ -6,11 +6,6 @@
     android:versionCode="381"
     android:versionName="6.41" >
 
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="29"
-        tools:ignore="OldTargetApi" />
-
     <!-- normal permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -74,6 +69,7 @@
 
         <activity-alias
             android:name="de.schildbach.wallet.WalletActivity"
+            android:exported="true"
             android:targetActivity="de.schildbach.wallet.ui.WalletActivity" >
             <intent-filter android:label="@string/app_name_short" >
                 <action android:name="android.intent.action.MAIN" />
@@ -98,11 +94,12 @@
             android:configChanges="keyboard|keyboardHidden"
             android:label="@string/send_coins_activity_title"
             android:theme="@style/My.Theme.ChildActivity"
+            android:exported="true"
             android:windowSoftInputMode="adjustResize" >
             <intent-filter android:label="@string/send_coins_activity_title" >
                 <action android:name="android.intent.action.VIEW" />
 
-                <data android:scheme="bitcoin" />
+                <data android:scheme="goldcoin" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -162,6 +159,7 @@
         <activity
             android:name="de.schildbach.wallet.ui.backup.RestoreWalletFromExternalActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
+            android:exported="true"
             android:theme="@style/My.Theme.Dialog" >
             <intent-filter android:label="@string/import_keys_intent_filter_action" >
                 <action android:name="android.intent.action.VIEW" />
@@ -191,7 +189,6 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.file_attachment"
-            android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
@@ -200,6 +197,7 @@
 
         <receiver
             android:name="de.schildbach.wallet.WalletBalanceWidgetProvider"
+            android:exported="true"
             android:label="@string/appwidget_wallet_balance_title" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -217,7 +215,8 @@
             android:name="de.schildbach.wallet.offline.AcceptBluetoothService"
             android:exported="false" />
 
-        <receiver android:name="de.schildbach.wallet.service.BootstrapReceiver" >
+        <receiver android:name="de.schildbach.wallet.service.BootstrapReceiver"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
