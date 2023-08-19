@@ -10,8 +10,8 @@ configurations {
 }
 
 dependencies {
-    compile project(':integration-android')
-    compile 'org.goldcoinj:goldcoinj-core:0.14.9'
+    implementation project(':integration-android')
+    implementation 'org.goldcoinj:goldcoinj-core:0.14.9'
 }
 
 android {
