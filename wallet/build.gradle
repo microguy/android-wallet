@@ -42,8 +42,8 @@ ext {
 }
 
 android {
-    compileSdkVersion 'android-29'
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 31
+    buildToolsVersion '31.0.0'
 
     lintOptions {
         abortOnError false
@@ -51,8 +51,11 @@ android {
     }
 
     defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 31
         applicationId 'de.schildbach.wallet_test'
         generatedDensities = ['hdpi', 'xhdpi']
+        ndkVersion "23.1.7779620"
 
         dexOptions {
             preDexLibraries false
