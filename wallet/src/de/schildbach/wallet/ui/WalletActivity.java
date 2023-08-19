@@ -36,10 +36,12 @@ import de.schildbach.wallet.ui.preference.PreferenceActivity;
 import de.schildbach.wallet.ui.scan.ScanActivity;
 import de.schildbach.wallet.ui.send.SendCoinsActivity;
 import de.schildbach.wallet.ui.send.SweepWalletActivity;
+import de.schildbach.wallet.util.Bluetooth;
 import de.schildbach.wallet.util.CrashReporter;
 import de.schildbach.wallet.util.Nfc;
 import de.schildbach.wallet.util.OnFirstPreDraw;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
@@ -47,7 +49,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -61,6 +65,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -77,6 +84,8 @@ public final class WalletActivity extends AbstractWalletActivity {
     private View contentView;
 
     private static final int REQUEST_CODE_SCAN = 0;
+    private static final int MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT = 1;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -175,6 +184,40 @@ public final class WalletActivity extends AbstractWalletActivity {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         MaybeMaintenanceFragment.add(fragmentManager);
         AlertDialogsFragment.add(fragmentManager);
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.BLUETOOTH_CONNECT},
+                    MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT);
+        } else {
+            final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (bluetoothAdapter != null) {
+                config.updateLastBluetoothAddress(Bluetooth.getAddress(bluetoothAdapter));
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_BLUETOOTH_CONNECT: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted, so you can now access Bluetooth
+                    final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                    if (bluetoothAdapter != null) {
+                        getWalletApplication().getConfiguration().updateLastBluetoothAddress(Bluetooth.getAddress(bluetoothAdapter));
+                    }
+                } else {
+                    // Permission was denied, so you must handle the lack of Bluetooth access
+                }
+                return;
+            }
+            // Handle other permission requests here
+        }
     }
 
     @Override
