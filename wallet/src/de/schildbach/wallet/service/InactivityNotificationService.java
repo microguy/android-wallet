@@ -133,19 +133,19 @@ public final class InactivityNotificationService extends IntentService {
             notification.setContentTitle(title);
             notification.setContentText(text);
             notification
-                    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, WalletActivity.class), 0));
+                    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, WalletActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
             notification.setAutoCancel(true);
             if (!canDonate)
                 notification.addAction(new NotificationCompat.Action.Builder(0,
                         getString(R.string.notification_inactivity_action_dismiss),
-                        PendingIntent.getService(this, 0, dismissIntent, 0)).build());
+                        PendingIntent.getService(this, 0, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)).build());
             notification.addAction(new NotificationCompat.Action.Builder(0,
                     getString(R.string.notification_inactivity_action_dismiss_forever),
-                    PendingIntent.getService(this, 0, dismissForeverIntent, 0)).build());
+                    PendingIntent.getService(this, 0, dismissForeverIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)).build());
             if (canDonate)
                 notification
                         .addAction(new NotificationCompat.Action.Builder(0, getString(R.string.wallet_options_donate),
-                                PendingIntent.getService(this, 0, donateIntent, 0)).build());
+                                PendingIntent.getService(this, 0, donateIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)).build());
             nm.notify(Constants.NOTIFICATION_ID_INACTIVITY, notification.build());
         }
     }

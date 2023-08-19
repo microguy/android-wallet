@@ -189,7 +189,7 @@ public class BlockchainService extends LifecycleService {
 
         final AlarmManager alarmManager = (AlarmManager) application.getSystemService(Context.ALARM_SERVICE);
         final PendingIntent alarmIntent = PendingIntent.getService(application, 0,
-                new Intent(application, BlockchainService.class), 0);
+                new Intent(application, BlockchainService.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         alarmManager.cancel(alarmIntent);
 
         // workaround for no inexact set() before KitKat
@@ -281,7 +281,7 @@ public class BlockchainService extends LifecycleService {
             summaryNotification.setContentText(text);
         }
         summaryNotification
-                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, WalletActivity.class), 0));
+                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, WalletActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         nm.notify(Constants.NOTIFICATION_ID_COINS_RECEIVED, summaryNotification.build());
 
         // child notification
@@ -303,7 +303,7 @@ public class BlockchainService extends LifecycleService {
                 childNotification.setContentText(addressStr);
         }
         childNotification
-                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, WalletActivity.class), 0));
+                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, WalletActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         childNotification.setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.coins_received));
         nm.notify(transactionHash.toString(), Constants.NOTIFICATION_ID_COINS_RECEIVED, childNotification.build());
     }
@@ -361,7 +361,7 @@ public class BlockchainService extends LifecycleService {
                         notification.setContentTitle(getString(R.string.app_name));
                         notification.setContentText(getString(R.string.notification_peers_connected_msg, numPeers));
                         notification.setContentIntent(PendingIntent.getActivity(BlockchainService.this, 0,
-                                new Intent(BlockchainService.this, WalletActivity.class), 0));
+                                new Intent(BlockchainService.this, WalletActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
                         notification.setWhen(System.currentTimeMillis());
                         notification.setOngoing(true);
                         startForeground(Constants.NOTIFICATION_ID_CONNECTED, notification.build());
