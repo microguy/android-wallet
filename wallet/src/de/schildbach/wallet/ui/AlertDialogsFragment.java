@@ -34,6 +34,7 @@ import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.util.CrashReporter;
 import de.schildbach.wallet.util.Installer;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -49,8 +50,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.text.format.DateUtils;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
@@ -82,6 +87,8 @@ public class AlertDialogsFragment extends Fragment {
 
     private static final Logger log = LoggerFactory.getLogger(AlertDialogsFragment.class);
 
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
@@ -111,12 +118,26 @@ public class AlertDialogsFragment extends Fragment {
         url.addQueryParameter("sdk", Integer.toString(Build.VERSION.SDK_INT));
         url.addQueryParameter("current", Integer.toString(packageInfo.versionCode));
         versionUrl = url.build();
+
+        final boolean walletIsEmpty = application.getWallet().getTransactions(true).isEmpty();
+
+        requestPermissionLauncher =
+                registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                    // do nothing
+                });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
+                !walletIsEmpty) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+/*
         log.debug("querying \"{}\"...", versionUrl);
         final Request.Builder request = new Request.Builder();
         request.url(versionUrl);
@@ -174,6 +195,7 @@ public class AlertDialogsFragment extends Fragment {
                     handleCatchAll();
             }
         });
+ */
     }
 
     @Override
