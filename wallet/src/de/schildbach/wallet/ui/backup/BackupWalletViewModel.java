@@ -17,12 +17,13 @@
 
 package de.schildbach.wallet.ui.backup;
 
-import de.schildbach.wallet.WalletApplication;
-import de.schildbach.wallet.data.WalletLiveData;
-
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+
+import de.schildbach.wallet.WalletApplication;
+import de.schildbach.wallet.data.WalletLiveData;
 
 /**
  * @author Andreas Schildbach
