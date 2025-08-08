@@ -6,7 +6,7 @@ A secure Goldcoin wallet for Android devices. Based on the original Bitcoin Wall
 
 - **No registration required** - Start using Goldcoin immediately
 - **No cloud server** or web service needed - This wallet is truly peer-to-peer
-- **Display of Goldcoin amount** in GLD and mGLD
+- **Display of Goldcoin amount** in GLC and mGLC
 - **Conversion** to and from national currencies
 - **Send and receive** Goldcoin via QR codes or Goldcoin URLs
 - **Address book** for regularly used Goldcoin addresses
