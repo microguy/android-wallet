@@ -1,12 +1,15 @@
 apply plugin: 'com.android.application'
 
-//def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
 repositories {
+    google()
+    mavenCentral()
     mavenLocal()
 }
 
 configurations {
-    all*.exclude group: 'com.google.android', module: 'android'
+    all {
+        exclude group: 'com.google.android', module: 'android'
+    }
 }
 
 dependencies {
