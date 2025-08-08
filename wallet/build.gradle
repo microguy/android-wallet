@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'androidsvgdrawable'
+// Temporarily disabled - androidsvgdrawable plugin needs update for Gradle 9
+// apply plugin: 'androidsvgdrawable'
 
 repositories {
     google()
@@ -135,10 +136,11 @@ android {
     }
 }
 
-task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) {
-    from = files('graphics/mipmap')
-    to = file('res')
-    targetedDensities = ['hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
-    outputFormat = 'PNG'
-    outputType = 'mipmap'
-}
+// Temporarily disabled - androidsvgdrawable plugin needs update for Gradle 9
+// task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) {
+//     from = files('graphics/mipmap')
+//     to = file('res')
+//     targetedDensities = ['hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
+//     outputFormat = 'PNG'
+//     outputType = 'mipmap'
+// }
