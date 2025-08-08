@@ -547,8 +547,8 @@ public class BlockchainService extends LifecycleService {
                     blockStore.getChainHead(); // detect corruptions as early as possible
 
                     final long earliestKeyCreationTime = wallet.getEarliestKeyCreationTime();
-                    long lastCheckpointTime = 0;
 
+                    long lastCheckpointTime = 0;
                     if (!blockChainFileExists && earliestKeyCreationTime > 0) {
                         try {
                             final Stopwatch watch = Stopwatch.createStarted();
