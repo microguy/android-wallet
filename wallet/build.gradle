@@ -89,6 +89,7 @@ android {
         }
         debug {
             debuggable true
+            minifyEnabled false
         }
     }
     defaultConfig {
