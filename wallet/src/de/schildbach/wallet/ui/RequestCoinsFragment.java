@@ -139,10 +139,14 @@ public final class RequestCoinsFragment extends Fragment {
                 final NfcAdapter nfcAdapter = RequestCoinsFragment.this.nfcAdapter;
                 final SpannableStringBuilder initiateText = new SpannableStringBuilder(
                         getString(R.string.request_coins_fragment_initiate_request_qr));
+                // Android Beam (NFC push) was removed in Android 10 (API 29)
+                // Commenting out for API level 35 compatibility
+                /*
                 if (nfcAdapter != null && nfcAdapter.isEnabled()) {
                     initiateText.append(' ').append(getString(R.string.request_coins_fragment_initiate_request_nfc));
                     nfcAdapter.setNdefPushMessage(createNdefMessage(paymentRequest), activity);
                 }
+                */
                 initiateRequestView.setText(initiateText);
             }
         });

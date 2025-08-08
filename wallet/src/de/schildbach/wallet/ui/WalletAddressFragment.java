@@ -87,8 +87,12 @@ public final class WalletAddressFragment extends Fragment {
             @Override
             public void onChanged(final Uri bitcoinUri) {
                 final NfcAdapter nfcAdapter = WalletAddressFragment.this.nfcAdapter;
+                // Android Beam (NFC push) was removed in Android 10 (API 29)
+                // Commenting out for API level 35 compatibility
+                /*
                 if (nfcAdapter != null)
                     nfcAdapter.setNdefPushMessage(createNdefMessage(bitcoinUri.toString()), activity);
+                */
                 ViewModelProviders.of(activity).get(WalletActivityViewModel.class).addressLoadingFinished();
             }
         });
