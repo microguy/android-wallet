@@ -43,7 +43,7 @@ ext {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 35
     buildToolsVersion '33.0.2'
 
     lintOptions {
@@ -53,7 +53,7 @@ android {
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 35
         applicationId 'de.schildbach.wallet_test'
         generatedDensities = ['hdpi', 'xhdpi']
         ndkVersion "23.1.7779620"
@@ -83,8 +83,8 @@ android {
         }
     }
     defaultConfig {
-        versionCode 64108
-        versionName "6.41.4"
+        versionCode 64109
+        versionName "6.41.5"
         vectorDrawables.useSupportLibrary = true
     }
     flavorDimensions("version")
