@@ -2,13 +2,17 @@ apply plugin: 'com.android.application'
 apply plugin: 'androidsvgdrawable'
 
 repositories {
+    google()
+    mavenCentral()
     mavenLocal()
 }
 
 configurations {
-    all*.exclude group: 'com.google.android', module: 'android'
-    all*.exclude group: 'androidx.legacy', module: 'legacy-support-core-ui'
-    all*.exclude group: 'androidx.legacy', module: 'legacy-support-core-utils'
+    all {
+        exclude group: 'com.google.android', module: 'android'
+        exclude group: 'androidx.legacy', module: 'legacy-support-core-ui'
+        exclude group: 'androidx.legacy', module: 'legacy-support-core-utils'
+    }
 }
 
 dependencies {
