@@ -48,6 +48,7 @@ ext {
 }
 
 android {
+    namespace 'de.schildbach.wallet'
     compileSdkVersion 35
     buildToolsVersion '33.0.2'
 
