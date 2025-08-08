@@ -542,12 +542,12 @@ public class BlockchainService extends LifecycleService {
                     wallet.reset();
                 }
 
+                long lastCheckpointTime = 0;
                 try {
                     blockStore = new SPVBlockStore(Constants.NETWORK_PARAMETERS, blockChainFile);
                     blockStore.getChainHead(); // detect corruptions as early as possible
 
                     final long earliestKeyCreationTime = wallet.getEarliestKeyCreationTime();
-                    long lastCheckpointTime = 0;
 
                     if (!blockChainFileExists && earliestKeyCreationTime > 0) {
                         try {
