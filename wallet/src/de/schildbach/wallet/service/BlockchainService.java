@@ -548,6 +548,7 @@ public class BlockchainService extends LifecycleService {
 
                     final long earliestKeyCreationTime = wallet.getEarliestKeyCreationTime();
 
+                    long lastCheckpointTime = 0;
                     if (!blockChainFileExists && earliestKeyCreationTime > 0) {
                         try {
                             final Stopwatch watch = Stopwatch.createStarted();
@@ -555,6 +556,15 @@ public class BlockchainService extends LifecycleService {
                                     .open(Constants.Files.CHECKPOINTS_FILENAME);
                             CheckpointManager.checkpoint(Constants.NETWORK_PARAMETERS, checkpointsInputStream,
                                     blockStore, earliestKeyCreationTime);
+                            
+                            // Get the last checkpoint time for fast catchup
+                            try {
+                                StoredBlock checkpointBlock = blockStore.getChainHead();
+                                lastCheckpointTime = checkpointBlock.getHeader().getTimeSeconds();
+                            } catch (Exception e) {
+                                log.warn("Could not get checkpoint time", e);
+                            }
+                            
                             watch.stop();
                             log.info("checkpoints loaded from '{}', took {}", Constants.Files.CHECKPOINTS_FILENAME,
                                     watch);
@@ -704,6 +714,13 @@ public class BlockchainService extends LifecycleService {
                 peerGroup.setUserAgent(Constants.USER_AGENT, application.packageInfo().versionName);
                 peerGroup.addConnectedEventListener(peerConnectivityListener);
                 peerGroup.addDisconnectedEventListener(peerConnectivityListener);
+
+                // Set fast catchup time to last checkpoint minus 1 second
+                // This prevents the stall at last checkpoint
+                if (lastCheckpointTime > 0) {
+                    peerGroup.setFastCatchupTimeSecs(lastCheckpointTime - 1);
+                    log.info("Fast catchup time set to: {}", lastCheckpointTime - 1);
+                }
 
                 final int maxConnectedPeers = application.maxConnectedPeers();
 
