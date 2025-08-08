@@ -1,4 +1,5 @@
-res/mipmap-*hdpi/
-res/mipmap-mdpi/
+# Temporarily commenting out to allow placeholder icons
+# res/mipmap-*hdpi/
+# res/mipmap-mdpi/
 .externalNativeBuild/
 .cxx
