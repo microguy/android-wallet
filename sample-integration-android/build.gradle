@@ -15,12 +15,15 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 'android-15'
+    compileSdkVersion 35
     buildToolsVersion '33.0.2'
 
     lintOptions { abortOnError false }
 
     defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 35
+        
         dexOptions {
             preDexLibraries false
         }
