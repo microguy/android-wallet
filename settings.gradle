@@ -1,3 +1,4 @@
 include 'wallet'
 include 'integration-android'
-include 'sample-integration-android'
+// Temporarily disabled - sample project has Gradle 9 compatibility issues
+// include 'sample-integration-android'
