@@ -717,10 +717,13 @@ public class BlockchainService extends LifecycleService {
 
                 // Set fast catchup time to last checkpoint minus 1 second
                 // This prevents the stall at last checkpoint
+                // Temporarily disabled to debug crash
+                /*
                 if (lastCheckpointTime > 0) {
                     peerGroup.setFastCatchupTimeSecs(lastCheckpointTime - 1);
                     log.info("Fast catchup time set to: {}", lastCheckpointTime - 1);
                 }
+                */
 
                 final int maxConnectedPeers = application.maxConnectedPeers();
 
