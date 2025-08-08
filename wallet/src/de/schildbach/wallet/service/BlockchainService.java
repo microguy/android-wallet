@@ -130,7 +130,6 @@ public class BlockchainService extends LifecycleService {
     private PeerConnectivityListener peerConnectivityListener;
     private NotificationManager nm;
     private ImpedimentsLiveData impediments;
-    private long lastCheckpointTime = 0;
     private int notificationCount = 0;
     private Coin notificationAccumulatedAmount = Coin.ZERO;
     private final List<Address> notificationAddresses = new LinkedList<Address>();
@@ -543,6 +542,7 @@ public class BlockchainService extends LifecycleService {
                     wallet.reset();
                 }
 
+                long lastCheckpointTime = 0;
                 try {
                     blockStore = new SPVBlockStore(Constants.NETWORK_PARAMETERS, blockChainFile);
                     blockStore.getChainHead(); // detect corruptions as early as possible
