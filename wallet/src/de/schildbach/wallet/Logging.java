@@ -60,15 +60,9 @@ public class Logging {
         fileAppender.setContext(context);
         fileAppender.setFile(logFile.getAbsolutePath());
 
-        final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<ILoggingEvent>();
-        rollingPolicy.setContext(context);
-        rollingPolicy.setParent(fileAppender);
-        rollingPolicy.setFileNamePattern(logDir.getAbsolutePath() + "/" + LOG_ROLLING_FILE_NAME_PATTERN);
-        rollingPolicy.setMaxHistory(7);
-        rollingPolicy.start();
-
         fileAppender.setEncoder(filePattern);
-        fileAppender.setRollingPolicy(rollingPolicy);
+        // Disable rolling policy for API 35 compatibility
+        // fileAppender.setRollingPolicy(rollingPolicy);
         fileAppender.start();
 
         final PatternLayoutEncoder logcatTagPattern = new PatternLayoutEncoder();
