@@ -94,8 +94,8 @@ android {
         }
     }
     defaultConfig {
-        versionCode 64109
-        versionName "6.41.5"
+        versionCode 64110
+        versionName "6.41.6"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
