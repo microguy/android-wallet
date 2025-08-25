@@ -87,11 +87,11 @@ We welcome contributions! Please:
 
 For major changes, please open an issue first to discuss.
 
-## Support
+## Community
 
-- **Issues**: [GitHub Issues](https://github.com/microguy/android-wallet/issues)
-- **Goldcoin Community**: [goldcoin.org](https://goldcoin.org)
-- **Email**: support@goldcoin.org
+- Website: https://goldcoinproject.org
+- Discord: https://discord.me/goldcoin
+- Telegram: https://t.me/goldcoin
 
 ## License
 
