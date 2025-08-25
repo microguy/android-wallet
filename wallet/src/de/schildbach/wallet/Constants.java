@@ -129,7 +129,7 @@ public final class Constants {
             ? "EGzCNEsMVYzHgFijmZprTW8w6hKe4NYpyN" : null;
 
     /** Recipient e-mail address for reports. */
-    public static final String REPORT_EMAIL = "stouse49@gmail.com";
+    public static final String REPORT_EMAIL = "goldcointeam@gmail.com";
 
     /** Subject line for manually reported issues. */
     public static final String REPORT_SUBJECT_ISSUE = "Goldcoin Wallet: Reported issue";
