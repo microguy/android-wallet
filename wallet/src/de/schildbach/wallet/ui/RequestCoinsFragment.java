@@ -33,6 +33,7 @@ import de.schildbach.wallet.util.Bluetooth;
 import de.schildbach.wallet.util.Nfc;
 import de.schildbach.wallet.util.Toast;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
@@ -49,6 +50,7 @@ import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -63,9 +65,12 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ShareCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -93,6 +98,7 @@ public final class RequestCoinsFragment extends Fragment {
     private static final String KEY_RECEIVE_ADDRESS = "receive_address";
 
     private RequestCoinsViewModel viewModel;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     private static final Logger log = LoggerFactory.getLogger(RequestCoinsFragment.class);
 
@@ -111,6 +117,18 @@ public final class RequestCoinsFragment extends Fragment {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        // Initialize the permission request launcher
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+            if (granted) {
+                log.info("BLUETOOTH_CONNECT permission granted");
+                maybeStartBluetoothListening();
+            } else {
+                log.info("BLUETOOTH_CONNECT permission denied");
+                acceptBluetoothPaymentView.setChecked(false);
+                Toast.customToast(activity, R.string.permission_bluetooth_denied_message);
+            }
+        });
 
         viewModel = ViewModelProviders.of(this).get(RequestCoinsViewModel.class);
         viewModel.freshReceiveAddress.observe(this, new Observer<Address>() {
@@ -202,8 +220,12 @@ public final class RequestCoinsFragment extends Fragment {
 
         final BluetoothAdapter bluetoothAdapter = this.bluetoothAdapter;
         acceptBluetoothPaymentView = (CheckBox) view.findViewById(R.id.request_coins_accept_bluetooth_payment);
-        acceptBluetoothPaymentView.setVisibility(
-                bluetoothAdapter != null && Bluetooth.getAddress(bluetoothAdapter) != null ? View.VISIBLE : View.GONE);
+        // Check Bluetooth availability using multiple sources like Bitcoin Wallet does
+        final boolean bluetoothAvailable = bluetoothAdapter != null &&
+                (Bluetooth.getAddress(bluetoothAdapter) != null || 
+                 config.getLastBluetoothAddress() != null || 
+                 config.getBluetoothAddress() != null);
+        acceptBluetoothPaymentView.setVisibility(bluetoothAvailable ? View.VISIBLE : View.GONE);
         acceptBluetoothPaymentView.setChecked(bluetoothAdapter != null && bluetoothAdapter.isEnabled());
         acceptBluetoothPaymentView.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
@@ -300,14 +322,38 @@ public final class RequestCoinsFragment extends Fragment {
         }
     }
 
+
+    private boolean checkBluetoothConnectPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            // Permission not needed before Android 12
+            return true;
+        }
+        return ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
     private boolean maybeStartBluetoothListening() {
+        // Check for BLUETOOTH_CONNECT permission on Android 12+
+        if (!checkBluetoothConnectPermission()) {
+            log.info("missing {}, requesting", Manifest.permission.BLUETOOTH_CONNECT);
+            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+            return false;
+        }
+        
         final String bluetoothAddress = Bluetooth.getAddress(bluetoothAdapter);
         if (bluetoothAddress != null && acceptBluetoothPaymentView.isChecked()) {
+            log.info("Bluetooth address retrieved successfully: {}", bluetoothAddress);
+            // Update the last known Bluetooth address
+            config.updateLastBluetoothAddress(bluetoothAddress);
+            
             viewModel.bluetoothServiceIntent = new Intent(activity, AcceptBluetoothService.class);
             activity.startService(viewModel.bluetoothServiceIntent);
             viewModel.bluetoothMac.setValue(Bluetooth.compressMac(bluetoothAddress));
             return true;
         } else {
+            if (bluetoothAddress == null) {
+                log.warn("Could not retrieve Bluetooth address");
+            }
             return false;
         }
     }
