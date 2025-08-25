@@ -126,7 +126,7 @@ public final class Constants {
 
     /** Donation address for tip/donate action. */
     public static final String DONATION_ADDRESS = NETWORK_PARAMETERS.getId().equals(NetworkParameters.ID_MAINNET)
-            ? "EGzCNEsMVYzHgFijmZprTW8w6hKe4NYpyN" : null;
+            ? "EANsCgwjCx5A2eFToeyHHCE11mnwuf6HAW" : null;
 
     /** Recipient e-mail address for reports. */
     public static final String REPORT_EMAIL = "goldcointeam@gmail.com";
