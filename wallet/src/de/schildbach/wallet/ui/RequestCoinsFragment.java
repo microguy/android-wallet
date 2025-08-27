@@ -126,7 +126,7 @@ public final class RequestCoinsFragment extends Fragment {
             } else {
                 log.info("BLUETOOTH_CONNECT permission denied");
                 acceptBluetoothPaymentView.setChecked(false);
-                Toast.customToast(activity, R.string.permission_bluetooth_denied_message);
+                new Toast(activity).toast(R.string.permission_bluetooth_denied_message);
             }
         });
 
