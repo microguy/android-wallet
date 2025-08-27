@@ -54,7 +54,11 @@ ext {
 android {
     namespace 'de.schildbach.wallet'
     compileSdkVersion 35
-    buildToolsVersion '33.0.2'
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
 
     lintOptions {
         abortOnError false
@@ -68,9 +72,6 @@ android {
         generatedDensities = ['hdpi', 'xhdpi']
         ndkVersion "23.1.7779620"
 
-        dexOptions {
-            preDexLibraries false
-        }
 
         ndk {
             abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
