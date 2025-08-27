@@ -55,6 +55,10 @@ android {
     namespace 'de.schildbach.wallet'
     compileSdkVersion 35
     
+    buildFeatures {
+        buildConfig true
+    }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
