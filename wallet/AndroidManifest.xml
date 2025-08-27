@@ -10,8 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.NFC" />
@@ -228,14 +226,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name="de.schildbach.wallet.service.UpgradeWalletService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-        <service
-            android:name="de.schildbach.wallet.service.InactivityNotificationService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
 
         <meta-data
             android:name="android.nfc.disable_beam_default"

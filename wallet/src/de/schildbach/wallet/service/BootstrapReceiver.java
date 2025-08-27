@@ -20,8 +20,8 @@ package de.schildbach.wallet.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.schildbach.wallet.Configuration;
-import de.schildbach.wallet.Constants;
+// import de.schildbach.wallet.Configuration;  // Not needed after removing InactivityNotificationService
+// import de.schildbach.wallet.Constants;  // Not needed after removing InactivityNotificationService
 import de.schildbach.wallet.WalletApplication;
 
 import android.content.BroadcastReceiver;
@@ -44,18 +44,18 @@ public class BootstrapReceiver extends BroadcastReceiver {
         final boolean packageReplaced = Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction());
 
         if (packageReplaced || bootCompleted) {
-            // make sure wallet is upgraded to HD
-            if (packageReplaced)
-                UpgradeWalletService.startUpgrade(context);
+            // Removed: UpgradeWalletService - not needed for Goldcoin
+            // if (packageReplaced)
+            //     UpgradeWalletService.startUpgrade(context);
 
             // make sure there is always an alarm scheduled
             BlockchainService.scheduleStart(application);
 
-            // if the app hasn't been used for a while and contains coins, maybe show reminder
-            final Configuration config = application.getConfiguration();
-            if (config.remindBalance() && config.hasBeenUsed()
-                    && config.getLastUsedAgo() > Constants.LAST_USAGE_THRESHOLD_INACTIVE_MS)
-                InactivityNotificationService.startMaybeShowNotification(context);
+            // Removed: InactivityNotificationService - not needed for Goldcoin
+            // final Configuration config = application.getConfiguration();
+            // if (config.remindBalance() && config.hasBeenUsed()
+            //         && config.getLastUsedAgo() > Constants.LAST_USAGE_THRESHOLD_INACTIVE_MS)
+            //     InactivityNotificationService.startMaybeShowNotification(context);
         }
     }
 }
