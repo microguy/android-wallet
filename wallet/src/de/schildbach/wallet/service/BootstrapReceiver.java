@@ -17,11 +17,11 @@
 
 package de.schildbach.wallet.service;
 
+import org.bitcoinj.wallet.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// import de.schildbach.wallet.Configuration;  // Not needed after removing InactivityNotificationService
-// import de.schildbach.wallet.Constants;  // Not needed after removing InactivityNotificationService
+import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
 
 import android.content.BroadcastReceiver;
@@ -44,18 +44,38 @@ public class BootstrapReceiver extends BroadcastReceiver {
         final boolean packageReplaced = Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction());
 
         if (packageReplaced || bootCompleted) {
-            // Removed: UpgradeWalletService - not needed for Goldcoin
-            // if (packageReplaced)
-            //     UpgradeWalletService.startUpgrade(context);
+            // upgrade wallet if needed (replaces UpgradeWalletService)
+            if (packageReplaced)
+                maybeUpgradeWallet(application);
 
-            // make sure there is always an alarm scheduled
-            BlockchainService.scheduleStart(application);
+            // make sure there is always an alarm scheduled (enterprise-grade optimization)
+            StartBlockchainService.schedule(this);
+        }
+    }
 
-            // Removed: InactivityNotificationService - not needed for Goldcoin
-            // final Configuration config = application.getConfiguration();
-            // if (config.remindBalance() && config.hasBeenUsed()
-            //         && config.getLastUsedAgo() > Constants.LAST_USAGE_THRESHOLD_INACTIVE_MS)
-            //     InactivityNotificationService.startMaybeShowNotification(context);
+    private void maybeUpgradeWallet(final WalletApplication application) {
+        org.bitcoinj.core.Context.propagate(Constants.CONTEXT);
+
+        final Wallet wallet = application.getWallet();
+
+        if (wallet.isDeterministicUpgradeRequired(Constants.UPGRADE_OUTPUT_SCRIPT_TYPE) && !wallet.isEncrypted()) {
+            log.info("detected non-HD wallet, upgrading");
+
+            // upgrade wallet to HD
+            wallet.upgradeToDeterministic(Constants.UPGRADE_OUTPUT_SCRIPT_TYPE, null);
+
+            // let other service pre-generate look-ahead keys
+            BlockchainService.start(application, false);
+        }
+
+        // perform wallet maintenance
+        try {
+            wallet.doMaintenance(null, false);
+
+            // let other service pre-generate look-ahead keys
+            BlockchainService.start(application, false);
+        } catch (final Exception x) {
+            log.error("failed doing wallet maintenance", x);
         }
     }
 }

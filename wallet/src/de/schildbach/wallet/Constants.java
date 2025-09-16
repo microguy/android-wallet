@@ -25,6 +25,7 @@ import org.bitcoinj.core.Context;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
+import org.bitcoinj.script.Script;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,12 @@ public final class Constants {
 
     /** Bitcoinj global context. */
     public static final Context CONTEXT = new Context(NETWORK_PARAMETERS);
+
+    /** The type of Bitcoin addresses used for the initial wallet */
+    public static final Script.ScriptType DEFAULT_OUTPUT_SCRIPT_TYPE = Script.ScriptType.P2WPKH;
+
+    /** The type of Bitcoin addresses to upgrade the current wallet to */
+    public static final Script.ScriptType UPGRADE_OUTPUT_SCRIPT_TYPE = Script.ScriptType.P2WPKH;
 
     /** Enable switch for synching of the blockchain */
     public static final boolean ENABLE_BLOCKCHAIN_SYNC = true;
@@ -222,5 +229,5 @@ public final class Constants {
     public static final String BITEASY_API_URL = NETWORK_PARAMETERS.getId().equals(NetworkParameters.ID_MAINNET) ? BITEASY_API_URL_PROD
             : BITEASY_API_URL_TEST;
 
-    public static final boolean GOLDCOIN_ELECTRUM_SUPPORT = false;
+    public static final boolean GOLDCOIN_ELECTRUM_SUPPORT = true;
 }

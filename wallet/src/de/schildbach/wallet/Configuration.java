@@ -300,6 +300,13 @@ public class Configuration {
             prefs.edit().putString(PREFS_KEY_LAST_BLUETOOTH_ADDRESS, bluetoothAddress).apply();
     }
 
+    /**
+     * Enterprise enhancement: Track last blockchain sync attempt for optimization
+     */
+    public void updateLastSyncAttempt() {
+        prefs.edit().putLong(PREFS_KEY_LAST_USED, System.currentTimeMillis()).apply();
+    }
+
     public void registerOnSharedPreferenceChangeListener(final OnSharedPreferenceChangeListener listener) {
         prefs.registerOnSharedPreferenceChangeListener(listener);
     }

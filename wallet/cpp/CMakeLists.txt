@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6.0)
 project(scrypt)
 add_library(scrypt SHARED scrypt_jni.c crypto_scrypt-nosse.c sha256.c)
-set_target_properties(scrypt PROPERTIES LINK_FLAGS -Wl,--build-id=none)
+set_target_properties(scrypt PROPERTIES LINK_FLAGS "-Wl,--build-id=none -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384")
 include_directories(.)

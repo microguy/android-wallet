@@ -362,4 +362,19 @@ public class WalletApplication extends Application {
         return ImmutableList.copyOf(Splitter.on('.').splitToList(packageInfo.packageName)).reverse().get(0) + ' '
                 + packageInfo.versionName + (BuildConfig.DEBUG ? " (debuggable)" : "");
     }
+
+    /**
+     * Enterprise enhancement: Get blockchain file size for intelligent sync scheduling
+     */
+    public long getBlockchainFileSize() {
+        try {
+            final File blockchainFile = new File(getFilesDir(), Constants.Files.BLOCKCHAIN_FILENAME);
+            if (blockchainFile.exists()) {
+                return blockchainFile.length();
+            }
+        } catch (final Exception x) {
+            // Ignore and return 0
+        }
+        return 0;
+    }
 }

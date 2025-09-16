@@ -20,7 +20,7 @@ configurations {
 dependencies {
     implementation project(':integration-android')
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'androidx.annotation:annotation:1.9.1'
     implementation 'androidx.core:core:1.0.0'
     implementation 'androidx.fragment:fragment:1.3.0'
     implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
@@ -30,17 +30,17 @@ dependencies {
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation "androidx.sqlite:sqlite:2.0.0"
-    implementation "androidx.room:room-runtime:2.0.0"
+    implementation "androidx.room:room-runtime:2.6.1"
     implementation 'androidx.activity:activity:1.3.1'
-    annotationProcessor "androidx.room:room-compiler:2.0.0"
+    annotationProcessor "androidx.room:room-compiler:2.6.1"
     implementation('com.github.microguy:goldcoinj:e7b5d5ccc5') {
         exclude group: 'org.slf4j', module: 'slf4j-jdk14'
     }
     implementation 'com.google.protobuf:protobuf-java:3.6.1'
-    implementation 'com.google.guava:guava:25.1-android'
-    implementation 'com.google.zxing:core:3.3.3'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
+    implementation 'com.google.guava:guava:33.4.0-android'
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'com.squareup.moshi:moshi:1.6.0'
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:1.3.0-2'
@@ -70,15 +70,15 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 26
         targetSdkVersion 35
         applicationId 'de.schildbach.wallet_test'
         generatedDensities = ['hdpi', 'xhdpi']
-        ndkVersion "23.1.7779620"
+        ndkVersion "28.0.12433566"
 
 
         ndk {
-            abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
+            abiFilters 'armeabi-v7a','arm64-v8a','x86_64'
         }
 
         externalNativeBuild {
@@ -99,8 +99,8 @@ android {
         }
     }
     defaultConfig {
-        versionCode 64120
-        versionName "6.41.7"
+        versionCode 64121
+        versionName "6.41.8"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
