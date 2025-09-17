@@ -26,9 +26,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.bitcoinj.core.Coin;
@@ -52,7 +55,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import okhttp3.internal.http.HttpDate;
 
 /**
  * @author Andreas Schildbach
@@ -65,6 +67,12 @@ public class DynamicFeeLiveData extends LiveData<Map<FeeCategory, Coin>> {
     private final File tempFile;
 
     private static final Logger log = LoggerFactory.getLogger(DynamicFeeLiveData.class);
+
+    private static String formatHttpDate(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return formatter.format(date);
+    }
 
     public DynamicFeeLiveData(final WalletApplication application) {
         final PackageInfo packageInfo = application.packageInfo();
@@ -169,7 +177,7 @@ public class DynamicFeeLiveData extends LiveData<Map<FeeCategory, Coin>> {
         request.url(url);
         request.header("User-Agent", userAgent);
         if (targetFile.exists())
-            request.header("If-Modified-Since", HttpDate.format(new Date(targetFile.lastModified())));
+            request.header("If-Modified-Since", formatHttpDate(new Date(targetFile.lastModified())));
 
         final OkHttpClient.Builder httpClientBuilder = Constants.HTTP_CLIENT.newBuilder();
         httpClientBuilder.connectTimeout(5, TimeUnit.SECONDS);

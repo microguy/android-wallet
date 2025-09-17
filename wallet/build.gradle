@@ -60,8 +60,8 @@ android {
     }
     
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     lintOptions {
@@ -104,14 +104,14 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
-    flavorDimensions("version")
+    flavorDimensions = ["version"]
     productFlavors {
         _testNet {
-            dimension "version"
+            dimension = "version"
             applicationId = "de.schildbach.wallet.goldcoin_test"
         }
         prod {
-            dimension "version"
+            dimension = "version"
             applicationId = "de.schildbach.wallet.goldcoin"
         }
     }
