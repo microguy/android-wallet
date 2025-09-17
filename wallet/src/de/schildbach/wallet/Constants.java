@@ -52,10 +52,10 @@ public final class Constants {
     public static final Context CONTEXT = new Context(NETWORK_PARAMETERS);
 
     /** The type of Bitcoin addresses used for the initial wallet */
-    public static final Script.ScriptType DEFAULT_OUTPUT_SCRIPT_TYPE = Script.ScriptType.P2WPKH;
+    public static final Script.ScriptType DEFAULT_OUTPUT_SCRIPT_TYPE = Script.ScriptType.P2PKH;
 
     /** The type of Bitcoin addresses to upgrade the current wallet to */
-    public static final Script.ScriptType UPGRADE_OUTPUT_SCRIPT_TYPE = Script.ScriptType.P2WPKH;
+    public static final Script.ScriptType UPGRADE_OUTPUT_SCRIPT_TYPE = Script.ScriptType.P2PKH;
 
     /** Enable switch for synching of the blockchain */
     public static final boolean ENABLE_BLOCKCHAIN_SYNC = true;

@@ -49,7 +49,7 @@ public class BootstrapReceiver extends BroadcastReceiver {
                 maybeUpgradeWallet(application);
 
             // make sure there is always an alarm scheduled (enterprise-grade optimization)
-            StartBlockchainService.schedule(this);
+            StartBlockchainService.schedule(context);
         }
     }
 
@@ -58,11 +58,11 @@ public class BootstrapReceiver extends BroadcastReceiver {
 
         final Wallet wallet = application.getWallet();
 
-        if (wallet.isDeterministicUpgradeRequired(Constants.UPGRADE_OUTPUT_SCRIPT_TYPE) && !wallet.isEncrypted()) {
+        if (wallet.isDeterministicUpgradeRequired() && !wallet.isEncrypted()) {
             log.info("detected non-HD wallet, upgrading");
 
             // upgrade wallet to HD
-            wallet.upgradeToDeterministic(Constants.UPGRADE_OUTPUT_SCRIPT_TYPE, null);
+            wallet.upgradeToDeterministic(null);
 
             // let other service pre-generate look-ahead keys
             BlockchainService.start(application, false);
