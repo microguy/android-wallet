@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Console appender for Android logcat -->
+    <appender name="LOGCAT" class="ch.qos.logback.classic.android.LogcatAppender">
+        <encoder>
+            <pattern>%msg</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set specific loggers to DEBUG for our wallet components -->
+    <logger name="de.schildbach.wallet" level="DEBUG" />
+    <logger name="de.schildbach.wallet.service.BlockchainService" level="DEBUG" />
+    <logger name="de.schildbach.wallet.service.BootstrapReceiver" level="DEBUG" />
+    <logger name="de.schildbach.wallet.ui.WalletActivity" level="DEBUG" />
+
+    <!-- Root logger set to INFO to avoid too much noise -->
+    <root level="INFO">
+        <appender-ref ref="LOGCAT" />
+    </root>
+</configuration>
