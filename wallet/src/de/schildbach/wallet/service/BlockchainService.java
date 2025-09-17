@@ -365,24 +365,7 @@ public class BlockchainService extends LifecycleService {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    final boolean connectivityNotificationEnabled = config.getConnectivityNotificationEnabled();
-
-                    if (!connectivityNotificationEnabled || numPeers == 0) {
-                        stopForeground(true);
-                    } else {
-                        final NotificationCompat.Builder notification = new NotificationCompat.Builder(
-                                BlockchainService.this, Constants.NOTIFICATION_CHANNEL_ID_ONGOING);
-                        notification.setSmallIcon(R.drawable.stat_notify_peers, Math.min(numPeers, 4));
-                        notification.setContentTitle(getString(R.string.app_name));
-                        notification.setContentText(getString(R.string.notification_peers_connected_msg, numPeers));
-                        notification.setContentIntent(PendingIntent.getActivity(BlockchainService.this, 0,
-                                new Intent(BlockchainService.this, WalletActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
-                        notification.setWhen(System.currentTimeMillis());
-                        notification.setOngoing(true);
-                        startForeground(Constants.NOTIFICATION_ID_CONNECTED, notification.build());
-                    }
-
-                    // send broadcast
+                    startForeground(numPeers);
                     broadcastPeerState(numPeers);
                 }
             });
@@ -509,12 +492,42 @@ public class BlockchainService extends LifecycleService {
         return super.onUnbind(intent);
     }
 
+    private void startForeground(final int numPeers) {
+        final NotificationCompat.Builder connectivityNotification = new NotificationCompat.Builder(this,
+                Constants.NOTIFICATION_CHANNEL_ID_ONGOING);
+        connectivityNotification.setSmallIcon(R.drawable.stat_notify_peers, Math.min(numPeers, 4));
+        connectivityNotification.setContentTitle(getString(R.string.app_name));
+        if (numPeers > 0) {
+            connectivityNotification.setContentText(getString(R.string.notification_peers_connected_msg, numPeers));
+        } else {
+            connectivityNotification.setContentText(getString(R.string.notification_peers_connected_msg, 0));
+        }
+        connectivityNotification.setContentIntent(PendingIntent.getActivity(this, 0,
+                new Intent(this, WalletActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
+        connectivityNotification.setWhen(System.currentTimeMillis());
+        connectivityNotification.setOngoing(true);
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                startForeground(Constants.NOTIFICATION_ID_CONNECTED, connectivityNotification.build(),
+                        android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+            else
+                startForeground(Constants.NOTIFICATION_ID_CONNECTED, connectivityNotification.build());
+        } catch (final ForegroundServiceStartNotAllowedException x) {
+            log.warn("exception when starting foreground service", x);
+        }
+    }
+
     @Override
     public void onCreate() {
         serviceCreatedAt = System.currentTimeMillis();
         log.debug(".onCreate()");
 
         super.onCreate();
+
+        // Immediately start as foreground service to satisfy Android 12+ requirements
+        startForeground(0);
+
         nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
