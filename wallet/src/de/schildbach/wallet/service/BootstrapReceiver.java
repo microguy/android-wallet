@@ -44,11 +44,14 @@ public class BootstrapReceiver extends BroadcastReceiver {
         final boolean packageReplaced = Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction());
 
         if (packageReplaced || bootCompleted) {
+            log.info("Bootstrap trigger: bootCompleted={}, packageReplaced={}", bootCompleted, packageReplaced);
+
             // upgrade wallet if needed (replaces UpgradeWalletService)
             if (packageReplaced)
                 maybeUpgradeWallet(application);
 
             // make sure there is always an alarm scheduled (enterprise-grade optimization)
+            log.info("Scheduling StartBlockchainService");
             StartBlockchainService.schedule(context);
         }
     }

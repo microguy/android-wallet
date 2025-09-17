@@ -228,6 +228,7 @@ public final class WalletActivity extends AbstractWalletActivity {
             @Override
             public void run() {
                 // delayed start so that UI has enough time to initialize
+                log.info("WalletActivity onResume - starting BlockchainService after 1000ms delay");
                 BlockchainService.start(WalletActivity.this, true);
             }
         }, 1000);

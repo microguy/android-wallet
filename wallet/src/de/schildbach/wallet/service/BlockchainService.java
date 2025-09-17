@@ -163,6 +163,8 @@ public class BlockchainService extends LifecycleService {
     private static final Logger log = LoggerFactory.getLogger(BlockchainService.class);
 
     public static void start(final Context context, final boolean cancelCoinsReceived) {
+        log.info("BlockchainService.start() called from context: {}, cancelCoinsReceived: {}",
+                context.getClass().getSimpleName(), cancelCoinsReceived);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             try {
                 attemptStart(context, cancelCoinsReceived);
@@ -175,11 +177,15 @@ public class BlockchainService extends LifecycleService {
     }
 
     private static void attemptStart(final Context context, final boolean cancelCoinsReceived) {
-        if (cancelCoinsReceived)
+        log.info("attemptStart() called, cancelCoinsReceived: {}", cancelCoinsReceived);
+        if (cancelCoinsReceived) {
+            log.info("Starting BlockchainService with ACTION_CANCEL_COINS_RECEIVED");
             ContextCompat.startForegroundService(context,
                     new Intent(BlockchainService.ACTION_CANCEL_COINS_RECEIVED, null, context, BlockchainService.class));
-        else
+        } else {
+            log.info("Starting BlockchainService with default intent");
             ContextCompat.startForegroundService(context, new Intent(context, BlockchainService.class));
+        }
     }
 
     public static void stop(final Context context) {
