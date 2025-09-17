@@ -52,11 +52,11 @@ ext {
 }
 
 android {
-    namespace 'de.schildbach.wallet'
+    namespace = 'de.schildbach.wallet'
     compileSdkVersion 35
     
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
     
     compileOptions {
@@ -65,7 +65,7 @@ android {
     }
 
     lintOptions {
-        abortOnError false
+        abortOnError = false
         disable 'MissingTranslation'
     }
 
@@ -74,7 +74,7 @@ android {
         targetSdkVersion 35
         applicationId 'de.schildbach.wallet_test'
         generatedDensities = ['hdpi', 'xhdpi']
-        ndkVersion "28.0.12433566"
+        ndkVersion = "29.0.14033849"
 
 
         ndk {
@@ -102,7 +102,7 @@ android {
         versionCode 64121
         versionName "6.41.8"
         vectorDrawables.useSupportLibrary = true
-        multiDexEnabled true
+        multiDexEnabled = true
     }
     flavorDimensions = ["version"]
     productFlavors {
