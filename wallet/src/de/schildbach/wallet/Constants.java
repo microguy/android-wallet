@@ -229,5 +229,5 @@ public final class Constants {
     public static final String BITEASY_API_URL = NETWORK_PARAMETERS.getId().equals(NetworkParameters.ID_MAINNET) ? BITEASY_API_URL_PROD
             : BITEASY_API_URL_TEST;
 
-    public static final boolean GOLDCOIN_ELECTRUM_SUPPORT = true;
+    public static final boolean GOLDCOIN_ELECTRUM_SUPPORT = false;
 }
