@@ -87,6 +87,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
+import android.app.ForegroundServiceStartNotAllowedException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -96,6 +97,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -103,6 +105,7 @@ import android.os.PowerManager.WakeLock;
 import android.text.format.DateUtils;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -160,11 +163,23 @@ public class BlockchainService extends LifecycleService {
     private static final Logger log = LoggerFactory.getLogger(BlockchainService.class);
 
     public static void start(final Context context, final boolean cancelCoinsReceived) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                attemptStart(context, cancelCoinsReceived);
+            } catch (final ForegroundServiceStartNotAllowedException x) {
+                log.info("failed to start in foreground", x);
+            }
+        } else {
+            attemptStart(context, cancelCoinsReceived);
+        }
+    }
+
+    private static void attemptStart(final Context context, final boolean cancelCoinsReceived) {
         if (cancelCoinsReceived)
-            context.startService(
+            ContextCompat.startForegroundService(context,
                     new Intent(BlockchainService.ACTION_CANCEL_COINS_RECEIVED, null, context, BlockchainService.class));
         else
-            context.startService(new Intent(context, BlockchainService.class));
+            ContextCompat.startForegroundService(context, new Intent(context, BlockchainService.class));
     }
 
     public static void stop(final Context context) {
