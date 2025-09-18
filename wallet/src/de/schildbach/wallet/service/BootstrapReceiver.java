@@ -50,9 +50,9 @@ public class BootstrapReceiver extends BroadcastReceiver {
             if (packageReplaced)
                 maybeUpgradeWallet(application);
 
-            // make sure there is always an alarm scheduled (enterprise-grade optimization)
-            log.info("Scheduling StartBlockchainService");
-            StartBlockchainService.schedule(context);
+            // make sure there is always an alarm scheduled
+            log.info("Scheduling BlockchainService");
+            BlockchainService.scheduleStart(application);
         }
     }
 
