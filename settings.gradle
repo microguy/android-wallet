@@ -4,6 +4,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        // Staging repository for testing goldcoinj-core 0.15.0
+        maven { url 'https://oss.sonatype.org/content/repositories/staging/' }
     }
 }
 

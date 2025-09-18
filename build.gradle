@@ -1,11 +1,4 @@
 buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        // Staging repository for testing goldcoinj-core 0.15.0
-        maven { url 'https://oss.sonatype.org/content/repositories/staging/' }
-    }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.2'
         classpath('fr.avianey.androidsvgdrawable:gradle-plugin:3.1.1') {
@@ -15,10 +8,4 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        // Staging repository for testing goldcoinj-core 0.15.0
-        maven { url 'https://oss.sonatype.org/content/repositories/staging/' }
-    }
 }
